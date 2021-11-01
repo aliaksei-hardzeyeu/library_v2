@@ -39,8 +39,7 @@
             <div class="cell">
                 <form action="${pageContext.request.contextPath}/" method="get">
                     <input type="hidden" name="bookId" value="<c:out value='${book.bookId}'/>"/>
-                    <input type="hidden" name="type" value="existing"/>
-                    <input type="hidden" name="action" value="view"/>
+                    <input type="hidden" name="action" value="viewExisting"/>
                     <input type="submit" name="view" value="<c:out value='${book.title}'/>"/>
                 </form>
             </div>
@@ -51,7 +50,7 @@
                 <c:out value="${book.publDate}"/>
             </div>
             <div class="cell">
-                <c:out value="${book.amount}"/>
+                <c:out value="${book.realAmount}"/>
             </div>
             <div class="cell">
                 <form action="${pageContext.request.contextPath}/" method="post">
@@ -65,8 +64,7 @@
 
 
     <form class="button-add" action="${pageContext.request.contextPath}/" method="get">
-        <input type="hidden" name="action" value="view"/>
-        <input type="hidden" name="type" value="new"/>
+        <input type="hidden" name="action" value="addNew"/>
         <input type="submit" name="add" value="ADD"/>
     </form>
 </div>

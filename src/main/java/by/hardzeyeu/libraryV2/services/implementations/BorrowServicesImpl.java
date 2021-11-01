@@ -1,7 +1,7 @@
 package by.hardzeyeu.libraryV2.services.implementations;
 
 import by.hardzeyeu.libraryV2.dao.BorrowDAO;
-import by.hardzeyeu.libraryV2.dto.StatusWorker;
+import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.services.BorrowService;
@@ -34,9 +34,9 @@ public class BorrowServicesImpl implements BorrowService {
         borrowDAO.addBorrow(bookId, userName, userEmail, borrowDateSql, timePeriod, comment);
     }
 
-    public void updateBorrow(String status, int borrowId) {
+    public void changeBorrowStatusSetReturnDate(String status, int borrowId) {
 
-        borrowDAO.updateBorrow(status, borrowId);
+        borrowDAO.changeBorrowStatusSetReturnDate(status, borrowId);
     }
 
     public List<Borrow> getListOfBorrows(int bookId) {
@@ -64,21 +64,9 @@ public class BorrowServicesImpl implements BorrowService {
     }
 
 
-    public void setStatus(Book book) {
-        StatusWorker statusWorker = borrowDAO.getDataForStatusWorker(book);
-
-        int returned = statusWorker.getReturned();
-        int damaged = statusWorker.getDamaged();
-        int lost = statusWorker.getLost();
-        int borrowed = statusWorker.getLost();
-        int totalAmount = book.getAmount();
-
-
-        int available = totalAmount - damaged - lost - borrowed;
-
-        if (available > 0) {
-            book.setStatus("available " + available + " of " + totalAmount);
-        }
-
+    public BookBorrowsInfo getBookBorrowsInfo(Book book) {
+        return borrowDAO.getBookBorrowsInfo(book);
     }
+
+
 }

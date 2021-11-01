@@ -28,8 +28,8 @@ public class BorrowServlet extends HttpServlet {
                 addBorrow(request, response);
                 break;
 
-            case "changeStatus":
-                changeStatus(request, response);
+            case "changeBorrowStatus":
+                changeBorrowStatus(request, response);
 
         }
     }
@@ -51,11 +51,19 @@ public class BorrowServlet extends HttpServlet {
 
         System.out.println("addborrow 3");
 //TODO CHANGE LOCALHOST TO NOT HARDCODED
-        response.sendRedirect("http://localhost:8081/?action=view&type=existing&bookId=" + bookId);
+        response.sendRedirect("http://localhost:8081/?action=viewExisting&bookId=" + bookId);
     }
 
 
-    void changeStatus(HttpServletRequest request, HttpServletResponse response) {
+    void changeBorrowStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("addborrow 0");
+        BorrowService borrowService = BorrowServicesImpl.getInstance();
+
+        borrowService.changeBorrowStatusSetReturnDate(request.getParameter("status"), Integer.parseInt(request.getParameter("borrowId")));
+        System.out.println("addborrow 1");
+
+//TODO CHANGE LOCALHOST TO NOT HARDCODED
+        response.sendRedirect("http://localhost:8081/?action=viewExisting&bookId=" + request.getParameter("bookId"));
 
     }
 }

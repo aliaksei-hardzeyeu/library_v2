@@ -22,31 +22,36 @@
 
         <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="<c:out value="${book.title}"/>"><br>
+            <input type="text" id="title" name="title" value="<c:out value="${book.title}"/>" required="required"><br>
 
             <label for="authors">Author:</label>
-            <input type="text" id="authors" name="authors" value="<c:out value="${book.authors}"/>"><br>
+            <input type="text" id="authors" name="authors" value="<c:out value="${book.authors}"/>"required="required"><br>
 
             <label for="publisher">Publisher:</label>
-            <input type="text" id="publisher" name="publisher" value="<c:out value="${book.publisher}"/>"><br>
+            <input type="text" id="publisher" name="publisher" value="<c:out value="${book.publisher}"/>"required="required"><br>
 
             <label for="publDate">Publication date:</label>
-            <input type="date" id="publDate" name="publDate" value="<c:out value="${book.publDate}"/>"><br>
+            <input type="date" id="publDate" name="publDate" value="<c:out value="${book.publDate}"/>"required="required"><br>
 
             <label for="genres">Genre:</label>
-            <input type="text" id="genres" name="genres" value="<c:out value="${book.genres}"/>"><br>
+            <input type="text" id="genres" name="genres" value="<c:out value="${book.genres}"/>"required="required"><br>
 
             <label for="pageCount">Page count:</label>
-            <input type="number" id="pageCount" name="pageCount" value="<c:out value="${book.pageCount}"/>"><br>
+            <input type="number" id="pageCount" name="pageCount" value="<c:out value="${book.pageCount}"/>"required="required"><br>
 
             <label for="isbn">ISBN:</label>
-            <input type="text" id="isbn" name="isbn" value="<c:out value="${book.isbn}"/>"><br>
+            <input type="text" id="isbn" name="isbn" value="<c:out value="${book.isbn}"/>"required="required"><br>
 
             <label for="description">Description:</label>
             <input type="text" id="description" name="description" value="<c:out value="${book.des}"/>"><br>
 
             <label for="amount">Total amount:</label>
-            <input type="number" id="amount" name="amount" value="<c:out value="${book.amount}"/>"><br>
+            <input type="number" id="amount" name="amount" value="<c:out value="${book.realAmount}"/>" readonly><br>
+
+            <label for="changeAmount">Change amount(Enter +n or -n):</label>
+            <input type="number" id="changeAmount" name="changeAmount" value="0" required><br>
+
+            <input type="hidden" id="givenAmount" name="givenAmount" value="<c:out value="${book.givenAmount}"/>"><br>
 
             <label for="status">Status:</label>
             <input type="text" id="status" name="status" value="<c:out value="${book.status}"/>" readonly><br>
@@ -54,7 +59,7 @@
 
             <input type="hidden" id="bookId" name="bookId" value="<c:out value="${book.bookId}"/>"><br>
 
-            <input type="hidden" name="action" value="${actionOnPage}"/>
+            <input type="hidden" name="action" value="update"/>
 
             <%--            <div>--%>
             <%--                <label for="file">Choose a file</label>--%>
@@ -96,66 +101,73 @@
                 <div class="cell">
                     <c:out value="${borrow.userEmail}"/>
                 </div>
+
                 <div class="cell">
                         <%--here should be modal window to switch status of borrow--%>
-                    <a href="#openModal2"><c:out value="${borrow.userName}"/></a>
-
+                    <a href="#openModal${borrow.borrowId}"><c:out value="${borrow.userName}"/></a>
                 </div>
+
                 <div class="cell">
                     <c:out value="${borrow.borrowDate}"/>
                 </div>
+
                 <div class="cell">
                     <c:out value="${borrow.dueDate}"/>
                 </div>
+
                 <div class="cell">
                     <c:out value="${borrow.returnDate}"/>
                 </div>
 
-            </div>
-            <div id="openModal2" class="modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title">Borrow status</h3>
+                <div id="openModal${borrow.borrowId}" class="modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title">Borrow status</h3>
+                            </div>
+
+                            <div class="modal-body">
+                                <form method="post" action="${pageContext.request.contextPath}/borrow">
+                                    <p>Please select borrow status:</p>
+                                    <div>
+                                        <input type="radio" id="statusChoice1"
+                                               name="status" value="returned" required>
+                                        <label for="statusChoice1">Returned</label>
+
+                                        <input type="radio" id="statusChoice2"
+                                               name="status" value="damaged">
+                                        <label for="statusChoice2">Returned & damaged</label>
+
+                                        <input type="radio" id="statusChoice3"
+                                               name="status" value="lost">
+                                        <label for="statusChoice3">Lost</label>
+
+                                        <input type="hidden" id="borrowId3" name="borrowId" value="${borrow.borrowId}">
+                                        <input type="hidden" id="bookId2" name="bookId" value="${book.bookId}">
+                                        <input type="hidden" id="action" name="action" value="changeBorrowStatus">
+
+                                    </div>
+                                    <div>
+                                        <button type="submit">Submit</button>
+                                    </div>
+                                </form>
+
+
+                                <a href="#close" title="Close" class="close">Discard</a>
+                            </div>
+
                         </div>
-                        <div class="modal-body">
 
-
-                            <form method="post" action="${pageContext.request.contextPath}/borrow">
-                                <p>Please select borrow status:</p>
-                                <div>
-                                    <input type="radio" id="statusChoice1"
-                                           name="status" value="returned">
-                                    <label for="statusChoice1">Returned</label>
-
-                                    <input type="radio" id="statusChoice2"
-                                           name="status" value="damaged">
-                                    <label for="statusChoice2">Returned & damaged</label>
-
-                                    <input type="radio" id="statusChoice3"
-                                           name="status" value="lost">
-                                    <label for="statusChoice3">Lost</label>
-
-                                    <input type="hidden" id="borrowId3" name="borrowId" value="${borrow.borrowId}">
-                                    <input type="hidden" id="action" name="action" value="changeStatus">
-
-                                </div>
-                                <div>
-                                    <button type="submit">Submit</button>
-                                </div>
-                            </form>
-
-
-                            <a href="#close" title="Close" class="close">Discard</a>
-                        </div>
                     </div>
                 </div>
+
             </div>
+
         </c:forEach>
 
-        <a href="#openModal1">Add borrow</a>
+        <a href="#openModal1111">!!!!Add borrow!!!!</a>
 
-        <div id="openModal1" class="modal">
+        <div id="openModal1111" class="modal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -169,15 +181,15 @@
 
                             <form id="send-borrows" action="${pageContext.request.contextPath}/borrow" method="post">
                                 <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" value=""><br>
+                                <input type="email" id="email" name="email" value="" required="required"><br>
 
 
                                 <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" value=""><br>
+                                <input type="text" id="name" name="name" value="" required="required"><br>
 
 
                                 <label for="period">Time period:</label>
-                                <input type="int" id="period" name="period" value=""><br>
+                                <input type="int" id="period" name="period" value="" required="required"><br>
 
 
                                 <label for="comment">Comment:</label>
@@ -185,11 +197,11 @@
 
                                 <input type="hidden" id="bookIdBorrow" name="bookId" value="${book.bookId}"><br>
                                 <input type="hidden" name="action" value="addBorrow"/>
-                                <input type="hidden" name="type" value="old"/>
                                 <input type="submit" form="send-borrows" name="submit"/>
 
                                 <a href="#close" title="Close" class="close">Discard</a>
                             </form>
+
 
                         </div>
 

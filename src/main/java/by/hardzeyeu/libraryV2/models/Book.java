@@ -13,7 +13,15 @@ public class Book {
     private String des;
     private LocalDate publDate;
     private String status;
-    private int amount;
+    private int givenAmount;
+
+    private int currentlyAvailableAmount;
+    private int realAmount;
+    private int damaged;
+    private int lost;
+    private int returned;
+    private int borrowed;
+    private LocalDate closestAvailableDate;
 
     public Book() {
     }
@@ -41,9 +49,72 @@ public class Book {
         this.isbn = isbn;
         this.des = des;
         this.publDate = publDate;
-        this.amount = amount;
     }
 
+
+    public int getCurrentlyAvailableAmount() {
+        return currentlyAvailableAmount;
+    }
+
+    public void setCurrentlyAvailableAmount(int currentlyAvailableAmount) {
+        this.currentlyAvailableAmount = currentlyAvailableAmount;
+    }
+
+    public int getDamaged() {
+        return damaged;
+    }
+
+    public void setDamaged(int damaged) {
+        this.damaged = damaged;
+    }
+
+    public int getLost() {
+        return lost;
+    }
+
+    public void setLost(int lost) {
+        this.lost = lost;
+    }
+
+    public int getReturned() {
+        return returned;
+    }
+
+    public void setReturned(int returned) {
+        this.returned = returned;
+    }
+
+    public int getBorrowed() {
+        return borrowed;
+    }
+
+    public void setBorrowed(int borrowed) {
+        this.borrowed = borrowed;
+    }
+
+    public int getGivenAmount() {
+        return givenAmount;
+    }
+
+    public void setGivenAmount(int givenAmount) {
+        this.givenAmount = givenAmount;
+    }
+
+    public int getRealAmount() {
+        return realAmount;
+    }
+
+    public void setRealAmount(int realAmount) {
+        this.realAmount = realAmount;
+    }
+
+    public LocalDate getClosestAvailableDate() {
+        return closestAvailableDate;
+    }
+
+    public void setClosestAvailableDate(LocalDate closestAvailableDate) {
+        this.closestAvailableDate = closestAvailableDate;
+    }
 
     public int getBookId() {
         return bookId;
@@ -51,14 +122,6 @@ public class Book {
 
     public void setBookId(int bookId) {
         this.bookId = bookId;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public String getTitle() {
@@ -139,6 +202,6 @@ public class Book {
     public String toString() {
         return  "book_id= " + bookId + "| title = " + title +"| authors=" + authors + "| publisher= " + publisher + "| genre= " + genres + "| pageCount= " + pageCount +
                 "| isbn= " + isbn + "| description=" + des + "| publDate= " + publDate + "| status= " + status +
-                "| amount= " + amount;
+                "| amount= " + givenAmount;
     }
 }
