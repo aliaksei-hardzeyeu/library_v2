@@ -1,22 +1,22 @@
 package by.hardzeyeu.libraryV2.dao;
 
 import by.hardzeyeu.libraryV2.connection.C3P0DataSource;
+import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
-import by.hardzeyeu.libraryV2.dto.StatusWorker;
+import by.hardzeyeu.libraryV2.services.Utils;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static by.hardzeyeu.libraryV2.services.Utils.convertToLocalDateViaSqlDate;
+import static by.hardzeyeu.libraryV2.services.Utils.convertToSqlDateFromLocalDate;
 
 public class BorrowDAO {
 
@@ -41,6 +41,7 @@ public class BorrowDAO {
                 borrow.setTimePeriod(result.getInt("time_period"));
                 borrow.setComment(result.getString("comment"));
                 borrow.setBorrowId(result.getInt("borrow_id"));
+                borrow.setReturnDate(convertToLocalDateViaSqlDate(result.getDate("return_date")));
 
 
                 listOfBorrows.add(borrow);
@@ -85,15 +86,23 @@ public class BorrowDAO {
         }
     }
 
-    public void updateBorrow(String status, int borrowId) {
+    /**
+     * Changes borrow status and sets return date.
+     *
+     * @param status
+     * @param borrowId
+     */
 
-        String query = "UPDATE borrows SET status = ? WHERE borrow_id = ?";
+    public void changeBorrowStatusSetReturnDate(String status, int borrowId) {
+
+        String query = "UPDATE borrows SET status = ?, return_date = ? WHERE borrow_id = ?";
 
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, status);
-            preparedStatement.setInt(2, borrowId);
+            preparedStatement.setDate(2, convertToSqlDateFromLocalDate(LocalDate.now()));
+            preparedStatement.setInt(3, borrowId);
 
             preparedStatement.execute();
 
@@ -105,57 +114,56 @@ public class BorrowDAO {
     /**
      * Retrieves number of damaged, lost, returned, borrowed instances of book. And puts in borrowDates
      *
-     *
      * @param book
      * @return
      */
-    //todo ПОДУМАТЬ МОЖ НЕ НУЖНА ХЭШМАПА, А ПРОСТО ЛИСТ С ДАТАМИ, РАЗДЕЛИТЬ НАВЕРНОЕ ВСЁ ЭТО НА МЕТОДЫ
+    //todo , РАЗДЕЛИТЬ НАВЕРНОЕ ВСЁ ЭТО НА МЕТОДЫ
     //todo ОСТАВИТЬ ЗДЕСЬ ТОЛЬКО ДАО, ВСЁ ОСТАЛЬНОЕ В СЕРВИСЫ
-    public StatusWorker getDataForStatusWorker(Book book) {
+
+    public BookBorrowsInfo getBookBorrowsInfo(Book book) {
+
+        BookBorrowsInfo bookBorrowsInfo = new BookBorrowsInfo();
+
         String query1 =
-         "SELECT COUNT(IF(status='damaged', 1, null)) 'damaged', " +
-                 "COUNT(IF(status ='lost', 1, null)) 'lost', " +
-                 "COUNT(IF(status ='returned', 1, null)) 'returned', " +
-                 "COUNT(IF(status = NULL, 1, null)) 'borrowed' FROM borrows WHERE book_id = ?;";
-
-        String query2 = "SELECT borrow_date, time_period FROM borrows WHERE status = NULL";
-
-        StatusWorker statusWorker = new StatusWorker();
-        HashMap<Integer, LocalDate> borrowDates = new HashMap<>();
-
+                "SELECT COUNT(IF(status='damaged', 1, null)) 'damaged', " +
+                        "COUNT(IF(status ='lost', 1, null)) 'lost', " +
+                        "COUNT(IF(status ='returned', 1, null)) 'returned', " +
+                        "COUNT(IF(status is NULL, 1, null)) 'borrowed' FROM borrows WHERE book_id = ?;";
 
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query1);
 
+            PreparedStatement preparedStatement = connection.prepareStatement(query1);
             preparedStatement.setInt(1, book.getBookId());
 
             ResultSet result1 = preparedStatement.executeQuery();
 
             while (result1.next()) {
-                statusWorker.setDamaged(result1.getInt("damaged"));
-                statusWorker.setLost(result1.getInt("lost"));
-                statusWorker.setReturned(result1.getInt("returned"));
-                statusWorker.setBorrowed(result1.getInt("borrowed"));
+                bookBorrowsInfo.setDamaged(result1.getInt("damaged"));
+                bookBorrowsInfo.setLost(result1.getInt("lost"));
+                bookBorrowsInfo.setReturned(result1.getInt("returned"));
+                bookBorrowsInfo.setBorrowed(result1.getInt("borrowed"));
             }
 
-            Statement statement = connection.createStatement();
+            List<LocalDate> dueDates = new ArrayList<>();
 
+            String query2 = "SELECT date_add(borrow_date, INTERVAL time_period MONTH) AS due_date " +
+                    "FROM borrows WHERE status IS NULL AND book_id = ?";
 
-            ResultSet result2 = statement.executeQuery(query2);
+            preparedStatement = connection.prepareStatement(query2);
+            preparedStatement.setInt(1, book.getBookId());
+
+            ResultSet result2 = preparedStatement.executeQuery();
 
             while (result2.next()) {
-                statusWorker.setDamaged(result2.getInt("damaged"));
-                statusWorker.setLost(result2.getInt("lost"));
-                statusWorker.setReturned(result2.getInt("returned"));
-                statusWorker.setBorrowed(result2.getInt("borrowed"));
+                dueDates.add(Utils.convertToLocalDateViaSqlDate(result2.getDate("due_date")));
             }
 
-
+            bookBorrowsInfo.setDueDatesWithoutStatus(dueDates);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return statusWorker;
+        return bookBorrowsInfo;
     }
 }

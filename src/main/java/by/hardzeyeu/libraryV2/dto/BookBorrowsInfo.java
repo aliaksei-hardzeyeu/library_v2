@@ -3,21 +3,22 @@ package by.hardzeyeu.libraryV2.dto;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
-public class StatusWorker {
+public class BookBorrowsInfo {
     int returned;
     int damaged;
     int lost;
     int borrowed;
 
-    HashMap<Integer, LocalDate> borrowDates;
+    List<LocalDate> dueDatesWithoutStatus;
 
-    public HashMap<Integer, LocalDate> getBorrowDates() {
-        return borrowDates;
+    public List<LocalDate> getDueDatesWithoutStatus() {
+        return dueDatesWithoutStatus;
     }
 
-    public void setBorrowDates(HashMap<Integer, LocalDate> borrowDates) {
-        this.borrowDates = borrowDates;
+    public void setDueDatesWithoutStatus(List<LocalDate> dueDatesWithoutStatus) {
+        this.dueDatesWithoutStatus = dueDatesWithoutStatus;
     }
 
     public int getReturned() {
@@ -54,11 +55,7 @@ public class StatusWorker {
 
     @Override
     public String toString() {
-        return "StatusWorker{" +
-                "returned=" + returned +
-                ", damaged=" + damaged +
-                ", lost=" + lost +
-                ", borrowed=" + borrowed +
-                '}';
+        return "BookBorrowsInfo |returned=" + returned + "| damaged=" + damaged + "| lost=" + lost + "| borrowed=" + borrowed +
+                " | dueDatesWithoutStatus " + dueDatesWithoutStatus.toString();
     }
 }

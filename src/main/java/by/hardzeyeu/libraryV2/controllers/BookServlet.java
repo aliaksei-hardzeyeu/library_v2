@@ -51,8 +51,12 @@ public class BookServlet extends HttpServlet {
                 viewMainPage(request, response);
                 break;
 
-            case "view":
+            case "viewExisting":
                 viewBook(request, response);
+                break;
+
+            case "addNew":
+                addNewBook(request, response);
                 break;
         }
     }
@@ -68,43 +72,36 @@ public class BookServlet extends HttpServlet {
         request.getRequestDispatcher("WEB-INF/views/mainPage.jsp").forward(request, response);
     }
 
+    void addNewBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("START OF addNew METHOD");
+        request.getRequestDispatcher("WEB-INF/views/addBookPage.jsp").forward(request, response);
+    }
+
     void viewBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("START OF view METHOD");
 
+        int bookId = Integer.parseInt(request.getParameter("bookId"));
 
-        String type = request.getParameter("type");
-
-        if (type.equals("new")) {
-
-            request.setAttribute("actionOnPage", "add");
-            request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
-
-        } else if (type.equals("existing")){
-            System.out.println("1 OF view METHOD");
+        BookService bookServicesImpl = BookServicesImpl.getInstance();
+        BorrowService borrowServiceImpl = BorrowServicesImpl.getInstance();
+        System.out.println("2 OF view METHOD");
 
 
-            int bookId = Integer.parseInt(request.getParameter("bookId"));
+        Book book = bookServicesImpl.getBook(bookId);
 
-            BookService bookServicesImpl = BookServicesImpl.getInstance();
-            BorrowService borrowServiceImpl = BorrowServicesImpl.getInstance();
-            System.out.println("2 OF view METHOD");
+        System.out.println("3 OF view METHOD");
 
+        List<Borrow> listOfBorrows = borrowServiceImpl.getListOfBorrows(bookId);
 
-            Book book = bookServicesImpl.getBook(bookId);
-            //todo set status setStatus(Book book)
+        request.setAttribute("book", book);
+        request.setAttribute("listOfBorrows", listOfBorrows);
+        request.setAttribute("actionOnPage", "update");
+        System.out.println("end OF view METHOD");
 
-            System.out.println("3 OF view METHOD");
-
-            List<Borrow> listOfBorrows = borrowServiceImpl.getListOfBorrows(bookId);
-
-            request.setAttribute("book", book);
-            request.setAttribute("listOfBorrows", listOfBorrows);
-            request.setAttribute("actionOnPage", "update");
-            System.out.println("end OF view METHOD");
-
-            request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
     }
+
+
 
     void updateBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("START OF UPDATE METHOD");
@@ -118,7 +115,7 @@ public class BookServlet extends HttpServlet {
         String publDate = request.getParameter("publDate");
         String authors = request.getParameter("authors");
         String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("amount"));
+        int amount = Integer.parseInt(request.getParameter("changeAmount")) + Integer.parseInt(request.getParameter("givenAmount"));
         int bookId = Integer.parseInt(request.getParameter("bookId"));
         System.out.println("MIDDLE OF UPDATE METHOD");
 
@@ -147,7 +144,7 @@ public class BookServlet extends HttpServlet {
         String publDate = request.getParameter("publDate");
         String authors = request.getParameter("authors");
         String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("amount"));
+        int amount = Integer.parseInt(request.getParameter("givenAmount"));
         System.out.println("middle OF ADD METHOD");
 
         bookServicesImpl.addBook(title, publisher, pageCount, isbn, des, publDate, authors, genres, amount);

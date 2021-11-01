@@ -77,12 +77,12 @@ public class BookDAO {
         book.setStatus(result.getString("status"));
         book.setAuthors(result.getString("authors"));
         book.setGenres(result.getString("genres"));
-        book.setAmount(result.getInt("amount"));
+        book.setGivenAmount(result.getInt("amount"));
     }
 
 
     public void addBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                        String authors, String genres, int amount) {
+                        String authors, String genres, int givenAmount) {
 
         String query = "INSERT INTO books (title, publisher, page_count, isbn, des, publ_date, authors, genres, amount)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -98,7 +98,7 @@ public class BookDAO {
             preparedStatement.setString(6, publDate);
             preparedStatement.setString(7, authors);
             preparedStatement.setString(8, genres);
-            preparedStatement.setInt(9, amount);
+            preparedStatement.setInt(9, givenAmount);
 
             preparedStatement.execute();
 

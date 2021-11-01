@@ -1,12 +1,9 @@
 package by.hardzeyeu.libraryV2.services;
 
+import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 
 public interface BorrowService {
@@ -17,10 +14,7 @@ public interface BorrowService {
     void addBorrow(int bookId, String userName, String userEmail, int timePeriod, String comment);
 
 
-    void updateBorrow(String status, int borrowId);
+    BookBorrowsInfo getBookBorrowsInfo(Book book);
 
-
-    public void setStatus(Book book);
-
-
+    void changeBorrowStatusSetReturnDate(String status, int borrowId);
 }
