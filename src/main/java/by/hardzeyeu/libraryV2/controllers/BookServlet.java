@@ -111,22 +111,17 @@ public class BookServlet extends HttpServlet {
 
 
         Book book = Utils.writeParamsIntoBookFromView(request, new Book());
-        BookValidator bookValidator = new BookValidator(request, response, book);
+        BookValidator bookValidator = new BookValidator(request, book);
 
-        if (bookValidator.validateAddForm()) {
+        if (bookValidator.validateUpdateForm()) {
             bookServicesImpl.updateBook(book);
             System.out.println("END OF UPDATE METHOD");
             viewMainPage(request, response);
 
         } else {
 
-            request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
+            viewBook(request, response);
         }
-
-
-
-
-
     }
 
     void removeBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -141,7 +136,7 @@ public class BookServlet extends HttpServlet {
         System.out.println("START OF ADD METHOD");
 
         Book book = Utils.writeParamsIntoBookFromView(request, new Book());
-        BookValidator bookValidator = new BookValidator(request, response, book);
+        BookValidator bookValidator = new BookValidator(request, book);
 
         if (bookValidator.validateAddForm()) {
             bookServicesImpl.addBook(book);

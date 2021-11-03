@@ -16,93 +16,130 @@ import java.util.regex.Pattern;
 
 public class BookValidator {
     HttpServletRequest request;
-    HttpServletResponse response;
 
     Book book;
 
 
-    public BookValidator(HttpServletRequest request, HttpServletResponse response, Book book) throws ServletException, IOException {
+    public BookValidator(HttpServletRequest request, Book book) throws ServletException, IOException {
         this.request = request;
-        this.response = response;
         this.book = book;
     }
 
 
     public boolean validateAddForm() throws ServletException, IOException {
-
         System.out.println("1");
         int errorCount = 0;
-        if (!areAuthorsValid(book.getAuthors())) {
+        if (!areAuthorsValid(book)) {
             request.setAttribute("message2", "Error entering authors, must be comma separated unique");
             errorCount++;
         }
         System.out.println("2");
 
-        if (!isPublicationDateValid(book.getPublDate())) {
+        if (!isPublicationDateValid(book)) {
             request.setAttribute("message4", "Date must not be after current date");
             errorCount++;
         }
         System.out.println("3");
 
-        if (!areGenresValid(book.getGenres())) {
+        if (!areGenresValid(book)) {
             request.setAttribute("message5", "Error entering genres, must be comma separated unique");
             errorCount++;
         }
         System.out.println("4");
 
-        if (!isPageCountValid(book.getPageCount())) {
+        if (!isPageCountValid(book)) {
             request.setAttribute("message6", "Must be positive number");
             errorCount++;
         }
         System.out.println("5");
 
-        if (!isIsbnValid(book.getIsbn())) {
+        if (!isIsbnValid(book)) {
             request.setAttribute("message7", "Check wiki for ISBN patterns");
             errorCount++;
         }
         System.out.println("6");
 
-        if (!isAmountValid(book.getGivenAmount())) {
+
+        if (!isGivenAmountValid(book)) {
             request.setAttribute("message8", "Amount must be positive integer");
-            request.setAttribute("message9", "You want to subtract too many copies - total amount is negative");
             errorCount++;
+
         }
-        System.out.println(errorCount);
-        System.out.println("7");
-
-
 
         if (errorCount > 0) {
             request.setAttribute("book", book);
-        return false;
+            return false;
         }
 
         return true;
     }
 
 
+    public boolean validateUpdateForm() {
+        int errorCount = 0;
+        if (!areAuthorsValid(book)) {
+            request.setAttribute("message2", "Error entering authors, must be comma separated unique");
+            errorCount++;
+        }
+        System.out.println("2");
+
+        if (!isPublicationDateValid(book)) {
+            request.setAttribute("message4", "Date must not be after current date");
+            errorCount++;
+        }
+        System.out.println("3");
+
+        if (!areGenresValid(book)) {
+            request.setAttribute("message5", "Error entering genres, must be comma separated unique");
+            errorCount++;
+        }
+        System.out.println("4");
+
+        if (!isPageCountValid(book)) {
+            request.setAttribute("message6", "Must be positive number");
+            errorCount++;
+        }
+        System.out.println("5");
+
+        if (!isIsbnValid(book)) {
+            request.setAttribute("message7", "Check wiki for ISBN patterns");
+            errorCount++;
+        }
+        System.out.println("6");
 
 
+        if (!isChangeAmountValid(book)) {
+            request.setAttribute("message9", "Wrong changeAmount number");
+            errorCount++;
 
+        }
 
-    boolean isPageCountValid(int pageCount) {
-        return pageCount > 0 && pageCount % 1 == 0;
+        if (errorCount > 0) {
+            request.setAttribute("book", book);
+            return false;
+        }
+
+        return true;
     }
 
-    boolean isIsbnValid(String isbn) {
+    boolean isPageCountValid(Book book) {
+        return book.getPageCount() > 0;
+    }
+
+    boolean isIsbnValid(Book book) {
         String regex = "^(?:ISBN(?:-10)?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$)[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(isbn);
+        Matcher matcher = pattern.matcher(book.getIsbn());
 
         return matcher.matches();
     }
 
-    boolean isPublicationDateValid(LocalDate publDate) {
-        return !publDate.isAfter(LocalDate.now());
+    boolean isPublicationDateValid(Book book) {
+        return !book.getPublDate().isAfter(LocalDate.now());
     }
 
-    boolean areAuthorsValid(String authors) {
-        List<String> splittedAuthors = Arrays.asList(authors.split("\\s*,\\s*"));
+    boolean areAuthorsValid(Book book) {
+        List<String> splittedAuthors = Arrays.asList(book.getAuthors().split("\\s*,\\s*"));
 
         for (int i = 0; i < splittedAuthors.size(); i++) {
             splittedAuthors.set(i, splittedAuthors.get(i).toLowerCase());
@@ -114,8 +151,8 @@ public class BookValidator {
     }
 
 
-    boolean areGenresValid(String genres) {
-        List<String> splittedGenres = Arrays.asList(genres.split("\\s*,\\s*"));
+    boolean areGenresValid(Book book) {
+        List<String> splittedGenres = Arrays.asList(book.getGenres().split("\\s*,\\s*"));
 
         for (int i = 0; i < splittedGenres.size(); i++) {
             splittedGenres.set(i, splittedGenres.get(i).toLowerCase());
@@ -126,7 +163,14 @@ public class BookValidator {
         return set.size() == splittedGenres.size();
     }
 
-    boolean isAmountValid(int amount) {
-        return amount > 0;
+    boolean isGivenAmountValid(Book book) {
+        return book.getGivenAmount() > 0;
+    }
+
+    boolean isChangeAmountValid(Book book) {
+        if (book.getChangeAmount() < 0) {
+            return Math.abs(book.getChangeAmount()) <= book.getCurrentlyAvailableAmount();
+        }
+        return true;
     }
 }

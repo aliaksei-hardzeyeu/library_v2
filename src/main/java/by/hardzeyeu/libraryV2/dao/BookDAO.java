@@ -60,26 +60,6 @@ public class BookDAO {
         return listOfBooks;
     }
 
-//    /**
-//     * Method for writing parameters from DB to book model
-//     *
-//     * @param result
-//     * @param book
-//     * @throws SQLException
-//     */
-//    private void writeParamsToBook(ResultSet result, Book book) throws SQLException {
-//        book.setBookId(result.getInt("book_id"));
-//        book.setTitle(result.getString("title"));
-//        book.setPublisher(result.getString("publisher"));
-//        book.setPageCount(result.getInt("page_count"));
-//        book.setIsbn(result.getString("isbn"));
-//        book.setDes(result.getString("des"));
-//        book.setPublDate(Utils.convertToLocalDateViaSqlDate(result.getDate("publ_date")));
-//        book.setStatus(result.getString("status"));
-//        book.setAuthors(result.getString("authors"));
-//        book.setGenres(result.getString("genres"));
-//        book.setGivenAmount(result.getInt("amount"));
-//    }
 
 
     public void addBook(Book book) {
@@ -119,11 +99,11 @@ public class BookDAO {
             preparedStatement.setString(2, book.getPublisher());
             preparedStatement.setInt(3, book.getPageCount());
             preparedStatement.setString(4, book.getIsbn());
-            preparedStatement.setString(5, book.getIsbn());
+            preparedStatement.setString(5, book.getDes());
             preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(book.getPublDate()));
             preparedStatement.setString(7, book.getAuthors());
             preparedStatement.setString(8, book.getGenres());
-            preparedStatement.setInt(9, book.getGivenAmount());
+            preparedStatement.setInt(9, book.getGivenAmount() + book.getChangeAmount());
             preparedStatement.setInt(10, book.getBookId());
 
 

@@ -51,19 +51,22 @@ public class Utils {
         book.setPublDate(LocalDate.parse(request.getParameter("publDate")));
         book.setAuthors(request.getParameter("authors"));
         book.setGenres(request.getParameter("genres"));
+        book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")));
+
+        book.setBorrowed(Integer.parseInt(request.getParameter("borrowed")));
+        book.setDamaged(Integer.parseInt(request.getParameter("damaged")));
+        book.setLost(Integer.parseInt(request.getParameter("lost")));
+        book.setReturned(Integer.parseInt(request.getParameter("returned")));
+        book.setCurrentlyAvailableAmount(Integer.parseInt(request.getParameter("currentlyAvailableAmount")));
+
 
         if (request.getParameter("bookId") != null) {
             book.setBookId(Integer.parseInt(request.getParameter("bookId")));
         }
 
 
-        if (request.getParameter("action").equals("add")) {
-            book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")));
-
-        } else {
-            book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")) +
-                                Integer.parseInt(request.getParameter("changeAmount")));
-
+        if (request.getParameter("action").equals("update")) {
+            book.setChangeAmount(Integer.parseInt(request.getParameter("changeAmount")));
         }
 
         return book;
@@ -92,27 +95,4 @@ public class Utils {
     }
 
 
-//    /**
-//     * Writes parameters from addBookPage.jsp into Book model for further validation
-//     * and updating existing in DB
-//     *
-//     * @param request
-//     * @return
-//     */
-//
-//    public static Book writeUpdateParamsIntoBookModel(HttpServletRequest request) {
-//        Book book = new Book();
-//
-//        book.setTitle(request.getParameter("title"));
-//        book.setPublisher(request.getParameter("publisher"));
-//        book.setPageCount(Integer.parseInt(request.getParameter("pageCount")));
-//        book.setIsbn(request.getParameter("isbn"));
-//        book.setDes(request.getParameter("description"));
-//        book.setPublDate(LocalDate.parse(request.getParameter("publDate")));
-//        book.setAuthors(request.getParameter("authors"));
-//        book.setGenres(request.getParameter("genres"));
-//        book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount") + Integer.parseInt(request.getParameter("changeAmount"))));
-//
-//        return book;
-//    }
 }

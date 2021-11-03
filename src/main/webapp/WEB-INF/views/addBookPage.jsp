@@ -42,10 +42,10 @@
             <input type="text" id="isbn" name="isbn" value="${book.isbn}" required="required">${message7}<br>
 
             <label for="description">Description:</label>
-            <input type="text" id="description" name="description" value="${book.des}">${message8}<br>
+            <input type="text" id="description" name="description" value="${book.des}"><br>
 
             <label for="givenAmount">Total amount:</label>
-            <input type="number" id="givenAmount" name="givenAmount" required="required" value="${book.givenAmount}">${message9}<br>
+            <input type="number" id="givenAmount" name="givenAmount" required="required" value="${book.givenAmount}">${message8}<br>
 
 
             <input type="hidden" name="action" value="add"/>

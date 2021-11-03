@@ -30,7 +30,8 @@ public class BookServicesImpl implements BookService {
         BorrowService borrowService = BorrowServicesImpl.getInstance();
 
         BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
-        setBookProperties(book, bookBorrowsInfo);
+        setBookStatusProperties(book, bookBorrowsInfo);
+        setBookBorrowStatusAndAmounts(book);
 
 
         return book;
@@ -42,7 +43,8 @@ public class BookServicesImpl implements BookService {
 
         for (Book book:listOfBooks) {
             BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
-            setBookProperties(book, bookBorrowsInfo);
+            setBookStatusProperties(book, bookBorrowsInfo);
+            setBookBorrowStatusAndAmounts(book);
         }
 
         return listOfBooks;
@@ -62,34 +64,39 @@ public class BookServicesImpl implements BookService {
 
 
     /**
-     * Sets status field in books table in accordance with borrows table
+     * Sets status properties fields in book in accordance with borrows table
      *
      * @param book
      */
 
-    public void setBookProperties (Book book, BookBorrowsInfo bookBorrowsInfo) {
-        int damaged = bookBorrowsInfo.getDamaged();
-        int lost = bookBorrowsInfo.getLost();
-        int returned = bookBorrowsInfo.getReturned();
-        int borrowed = bookBorrowsInfo.getBorrowed();
+    public void setBookStatusProperties (Book book, BookBorrowsInfo bookBorrowsInfo) {
+        book.setDamaged(bookBorrowsInfo.getDamaged());
+        book.setLost(bookBorrowsInfo.getLost());
+        book.setReturned(bookBorrowsInfo.getReturned());
+        book.setBorrowed(bookBorrowsInfo.getBorrowed());
 
-        List<LocalDate> dueDates = bookBorrowsInfo.getDueDatesWithoutStatus();
-        Collections.sort(dueDates);
+        book.setDueDatesWithoutStatus(bookBorrowsInfo.getDueDatesWithoutStatus());
+    }
 
-        System.out.println("damaged = " + damaged + " lost = " + lost + " returned = " + returned + " borrowed = " + borrowed);
+    /**
+     * Computes status of book: available/unavailable; counts available amount, closest due date if
+     * unavailable. List dueDatesWithoutStatus is simple list with LocalDates, so to choose closest
+     * we should sort it by natural ordering and get the first element.
+     *
+     * @param book
+     */
 
-        book.setRealAmount(book.getGivenAmount() - damaged - lost);
-        book.setCurrentlyAvailableAmount(book.getRealAmount() - borrowed);
+    public void setBookBorrowStatusAndAmounts(Book book) {
+        Collections.sort(book.getDueDatesWithoutStatus());
 
-        System.out.println("damaged = " + damaged + " lost = " + lost + " returned = " + returned + " borrowed = " + borrowed);
+        book.setCopiesExistingAmount(book.getGivenAmount() - book.getDamaged() - book.getLost());
+        book.setCurrentlyAvailableAmount(book.getCopiesExistingAmount() - book.getBorrowed());
 
-        if (book.getCurrentlyAvailableAmount() == 0) {
-            book.setStatus("UNAVAILABLE closest return date - " + dueDates.get(0));
+        if (book.getCurrentlyAvailableAmount() == 0 && book.getBorrowed() != 0) {
+            book.setStatus("UNAVAILABLE closest return date - " + book.getDueDatesWithoutStatus().get(0));
         } else {
-            book.setStatus("AVAILABLE " + book.getCurrentlyAvailableAmount() + " of " + book.getRealAmount());
+            book.setStatus("AVAILABLE " + book.getCurrentlyAvailableAmount() + " of " + book.getCopiesExistingAmount());
         }
-
-
     }
 
 

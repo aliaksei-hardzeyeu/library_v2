@@ -46,12 +46,19 @@
             <input type="text" id="description" name="description" value="<c:out value="${book.des}"/>">${message8}<br>
 
             <label for="amount">Total amount:</label>
-            <input type="number" id="amount" name="amount" value="<c:out value="${book.realAmount}"/>" readonly><br>
+            <input type="number" id="amount" name="amount" value="<c:out value="${book.copiesExistingAmount}"/>" readonly><br>
 
             <label for="changeAmount">Change amount(Enter +n or -n):</label>
-            <input type="number" id="changeAmount" name="changeAmount" value="0" required>${message10}<br>
+            <input type="number" id="changeAmount" name="changeAmount" value="0" required>${message9}<br>
 
             <input type="hidden" id="givenAmount" name="givenAmount" value="<c:out value="${book.givenAmount}"/>"><br>
+<%--            for all amounts from model--%>
+<%--            <input type="hidden" id="givenAmount" name="givenAmount" value="<c:out value="${book.copiesExistingAmount}"/>"><br>--%>
+            <input type="hidden" id="borrowed" name="borrowed" value="<c:out value="${book.borrowed}"/>"><br>
+            <input type="hidden" id="damaged" name="damaged" value="<c:out value="${book.damaged}"/>"><br>
+            <input type="hidden" id="lost" name="lost" value="<c:out value="${book.lost}"/>"><br>
+            <input type="hidden" id="returned" name="returned" value="<c:out value="${book.returned}"/>"><br>
+            <input type="hidden" id="currentlyAvailableAmount" name="currentlyAvailableAmount" value="<c:out value="${book.currentlyAvailableAmount}"/>"><br>
 
             <label for="status">Status:</label>
             <input type="text" id="status" name="status" value="<c:out value="${book.status}"/>" readonly><br>

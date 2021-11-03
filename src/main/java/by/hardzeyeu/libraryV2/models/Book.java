@@ -1,6 +1,7 @@
 package by.hardzeyeu.libraryV2.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Book {
     private int bookId;
@@ -16,12 +17,14 @@ public class Book {
     private int givenAmount;
 
     private int currentlyAvailableAmount;
-    private int realAmount;
+    private int copiesExistingAmount;
     private int damaged;
     private int lost;
     private int returned;
     private int borrowed;
-    private LocalDate closestAvailableDate;
+    private List<LocalDate> dueDatesWithoutStatus;
+
+    private int changeAmount;
 
     public Book() {
     }
@@ -84,6 +87,13 @@ public class Book {
     }
 
 
+    public int getChangeAmount() {
+        return changeAmount;
+    }
+
+    public void setChangeAmount(int changeAmount) {
+        this.changeAmount = changeAmount;
+    }
 
     public int getCurrentlyAvailableAmount() {
         return currentlyAvailableAmount;
@@ -133,20 +143,20 @@ public class Book {
         this.givenAmount = givenAmount;
     }
 
-    public int getRealAmount() {
-        return realAmount;
+    public int getCopiesExistingAmount() {
+        return copiesExistingAmount;
     }
 
-    public void setRealAmount(int realAmount) {
-        this.realAmount = realAmount;
+    public void setCopiesExistingAmount(int copiesExistingAmount) {
+        this.copiesExistingAmount = copiesExistingAmount;
     }
 
-    public LocalDate getClosestAvailableDate() {
-        return closestAvailableDate;
+    public List<LocalDate> getDueDatesWithoutStatus() {
+        return dueDatesWithoutStatus;
     }
 
-    public void setClosestAvailableDate(LocalDate closestAvailableDate) {
-        this.closestAvailableDate = closestAvailableDate;
+    public void setDueDatesWithoutStatus(List <LocalDate> dueDatesWithoutStatus) {
+        this.dueDatesWithoutStatus = dueDatesWithoutStatus;
     }
 
     public int getBookId() {

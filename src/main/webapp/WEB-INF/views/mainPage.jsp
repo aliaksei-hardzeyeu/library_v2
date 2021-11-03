@@ -40,7 +40,7 @@
                 <form action="${pageContext.request.contextPath}/" method="get">
                     <input type="hidden" name="bookId" value="<c:out value='${book.bookId}'/>"/>
                     <input type="hidden" name="action" value="viewExisting"/>
-                    <input type="submit" name="view" />
+                    <input type="submit" name="view" value="<c:out value='${book.title}'/>"/>
                 </form>
             </div>
             <div class="cell">
@@ -50,7 +50,7 @@
                 <c:out value="${book.publDate}"/>
             </div>
             <div class="cell">
-                <c:out value="${book.realAmount}"/>
+                <c:out value="${book.copiesExistingAmount}"/>
             </div>
             <div class="cell">
                 <form action="${pageContext.request.contextPath}/" method="post">
