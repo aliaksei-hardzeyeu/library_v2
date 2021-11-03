@@ -172,7 +172,17 @@
 
         </c:forEach>
 
-        <a href="#openModal1111">!!!!Add borrow!!!!</a>
+        <c:choose>
+            <c:when test="${book.currentlyAvailableAmount > 0}">
+                <a href="#openModal1111">!!!!Add borrow!!!!</a>
+                <br />
+            </c:when>
+            <c:otherwise>
+                U can`t borrow book, dude. No copies left.
+                <br />
+            </c:otherwise>
+        </c:choose>
+
 
         <div id="openModal1111" class="modal">
             <div class="modal-dialog">
@@ -195,8 +205,22 @@
                                 <input type="text" id="name" name="name" value="" required="required"><br>
 
 
-                                <label for="period">Time period:</label>
-                                <input type="int" id="period" name="period" value="" required="required"><br>
+                                <p>Choose time period</p>
+
+                                <input type="radio" id="period1" name="period" value="1" required="required">
+                                <label for="period1">1 month</label><br>
+
+                                <input type="radio" id="period2" name="period" value="2">
+                                <label for="period2">2 months</label><br>
+
+                                <input type="radio" id="period3" name="period" value="3">
+                                <label for="period3">3 months</label><br>
+
+                                <input type="radio" id="period6" name="period" value="6">
+                                <label for="period6">6 month</label><br>
+
+                                <input type="radio" id="period12" name="period" value="12">
+                                <label for="period1">12 months</label><br>
 
 
                                 <label for="comment">Comment:</label>

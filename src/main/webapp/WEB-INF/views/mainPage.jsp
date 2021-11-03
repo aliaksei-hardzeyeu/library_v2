@@ -68,6 +68,26 @@
         <input type="submit" name="add" value="ADD"/>
     </form>
 </div>
+<div>
+    <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
+       <p>Search box</p>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title"><br>
+
+        <label for="authors">Author:</label>
+        <input type="text" id="authors" name="authors"><br>
+
+        <label for="genres">Genres:</label>
+        <input type="text" id="genres" name="genres"><br>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description"><br>
+
+        <input type="hidden" name="action" value="search"/>
+
+        <input type="submit" form="send-values" name="update"/>
+    </form>
+</div>
 
 
 </body>
