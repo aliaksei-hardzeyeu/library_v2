@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class BookDAO {
             ResultSet result = preparedStatement.executeQuery();
 
             result.next();
-            writeParamsToBook(result, book);
+            Utils.writeParamsIntoBookFromDb(result, book);
 
 
         } catch (SQLException e) {
@@ -48,7 +49,7 @@ public class BookDAO {
             while (result.next()) {
                 Book book = new Book();
 
-                writeParamsToBook(result, book);
+                Utils.writeParamsIntoBookFromDb(result, book);
 
                 listOfBooks.add(book);
             }
@@ -59,30 +60,29 @@ public class BookDAO {
         return listOfBooks;
     }
 
-    /**
-     * Method for writing parameters from DB to book model
-     *
-     * @param result
-     * @param book
-     * @throws SQLException
-     */
-    private void writeParamsToBook(ResultSet result, Book book) throws SQLException {
-        book.setBookId(result.getInt("book_id"));
-        book.setTitle(result.getString("title"));
-        book.setPublisher(result.getString("publisher"));
-        book.setPageCount(result.getInt("page_count"));
-        book.setIsbn(result.getString("isbn"));
-        book.setDes(result.getString("des"));
-        book.setPublDate(Utils.convertToLocalDateViaSqlDate(result.getDate("publ_date")));
-        book.setStatus(result.getString("status"));
-        book.setAuthors(result.getString("authors"));
-        book.setGenres(result.getString("genres"));
-        book.setGivenAmount(result.getInt("amount"));
-    }
+//    /**
+//     * Method for writing parameters from DB to book model
+//     *
+//     * @param result
+//     * @param book
+//     * @throws SQLException
+//     */
+//    private void writeParamsToBook(ResultSet result, Book book) throws SQLException {
+//        book.setBookId(result.getInt("book_id"));
+//        book.setTitle(result.getString("title"));
+//        book.setPublisher(result.getString("publisher"));
+//        book.setPageCount(result.getInt("page_count"));
+//        book.setIsbn(result.getString("isbn"));
+//        book.setDes(result.getString("des"));
+//        book.setPublDate(Utils.convertToLocalDateViaSqlDate(result.getDate("publ_date")));
+//        book.setStatus(result.getString("status"));
+//        book.setAuthors(result.getString("authors"));
+//        book.setGenres(result.getString("genres"));
+//        book.setGivenAmount(result.getInt("amount"));
+//    }
 
 
-    public void addBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                        String authors, String genres, int givenAmount) {
+    public void addBook(Book book) {
 
         String query = "INSERT INTO books (title, publisher, page_count, isbn, des, publ_date, authors, genres, amount)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -90,15 +90,15 @@ public class BookDAO {
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, publisher);
-            preparedStatement.setInt(3, page_count);
-            preparedStatement.setString(4, isbn);
-            preparedStatement.setString(5, des);
-            preparedStatement.setString(6, publDate);
-            preparedStatement.setString(7, authors);
-            preparedStatement.setString(8, genres);
-            preparedStatement.setInt(9, givenAmount);
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getPublisher());
+            preparedStatement.setInt(3, book.getPageCount());
+            preparedStatement.setString(4, book.getIsbn());
+            preparedStatement.setString(5, book.getDes());
+            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(book.getPublDate()));
+            preparedStatement.setString(7, book.getAuthors());
+            preparedStatement.setString(8, book.getGenres());
+            preparedStatement.setInt(9, book.getGivenAmount());
 
             preparedStatement.execute();
 
@@ -107,7 +107,7 @@ public class BookDAO {
         }
     }
 
-    public void updateBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
+    public void updateBook(String title, String publisher, int page_count, String isbn, String des, LocalDate publDate,
                            String authors, String genres, int amount, int book_id) {
 
         String query = "UPDATE books SET title = ?, publisher = ?, page_count = ?, isbn = ?, des = ?, publ_date = ?, " +
@@ -121,7 +121,7 @@ public class BookDAO {
             preparedStatement.setInt(3, page_count);
             preparedStatement.setString(4, isbn);
             preparedStatement.setString(5, des);
-            preparedStatement.setString(6, publDate);
+            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(publDate));
             preparedStatement.setString(7, authors);
             preparedStatement.setString(8, genres);
             preparedStatement.setInt(9, amount);

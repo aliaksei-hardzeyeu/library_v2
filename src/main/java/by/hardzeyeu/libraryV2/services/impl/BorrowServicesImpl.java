@@ -1,4 +1,4 @@
-package by.hardzeyeu.libraryV2.services.implementations;
+package by.hardzeyeu.libraryV2.services.impl;
 
 import by.hardzeyeu.libraryV2.dao.BorrowDAO;
 import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;

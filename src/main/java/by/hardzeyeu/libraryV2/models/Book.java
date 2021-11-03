@@ -28,7 +28,9 @@ public class Book {
 
 
     /**
-     * Constructor isn`t complete!!!!!
+     * Constructor for adding new book and its validation
+     * Without id
+     *
      * @param title
      * @param authors
      * @param publisher
@@ -38,9 +40,9 @@ public class Book {
      * @param des
      * @param publDate
      */
-    //constructor without id!
-    public Book(String title, String authors, String publisher, String genres,
-                int pageCount, String isbn, String des, LocalDate publDate, int amount) {
+
+    public Book(String title, String publisher, int pageCount,
+                String isbn, String des, LocalDate publDate, String authors, String genres, int amount) {
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -49,7 +51,9 @@ public class Book {
         this.isbn = isbn;
         this.des = des;
         this.publDate = publDate;
+        this.givenAmount = amount;
     }
+
 
 
     public int getCurrentlyAvailableAmount() {

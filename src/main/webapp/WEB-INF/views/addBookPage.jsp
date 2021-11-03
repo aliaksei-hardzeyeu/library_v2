@@ -21,31 +21,31 @@
         BOOK-FORM
         <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title"  required="required"><br>
+            <input type="text" id="title" name="title" value="${bookTemp.title}" required="required">${message1}<br>
 
             <label for="authors">Author:</label>
-            <input type="text" id="authors" name="authors" required="required"><br>
+            <input type="text" id="authors" name="authors" value="${bookTemp.authors}" required="required">${message2}<br>
 
             <label for="publisher">Publisher:</label>
-            <input type="text" id="publisher" name="publisher" required="required"><br>
+            <input type="text" id="publisher" name="publisher" value="${bookTemp.publisher}" required="required">${message3}<br>
 
             <label for="publDate">Publication date:</label>
-            <input type="date" id="publDate" name="publDate" required="required"><br>
+            <input type="date" id="publDate" name="publDate" value="${bookTemp.publDate}" required="required">${message4}<br>
 
             <label for="genres">Genre:</label>
-            <input type="text" id="genres" name="genres" required="required"><br>
+            <input type="text" id="genres" name="genres" value="${bookTemp.genres}" required="required">${message5}<br>
 
             <label for="pageCount">Page count:</label>
-            <input type="number" id="pageCount" name="pageCount" required="required"><br>
+            <input type="number" id="pageCount" name="pageCount" value="${bookTemp.pageCount}" required="required">${message6}<br>
 
             <label for="isbn">ISBN:</label>
-            <input type="text" id="isbn" name="isbn" required="required"><br>
+            <input type="text" id="isbn" name="isbn" value="${bookTemp.isbn}" required="required">${message7}<br>
 
             <label for="description">Description:</label>
-            <input type="text" id="description" name="description"><br>
+            <input type="text" id="description" name="description" value="${bookTemp.des}">${message8}<br>
 
             <label for="givenAmount">Total amount:</label>
-            <input type="number" id="givenAmount" name="givenAmount" required="required"><br>
+            <input type="number" id="givenAmount" name="givenAmount" required="required" value="${bookTemp.givenAmount}">${message9}<br>
 
 
             <input type="hidden" name="action" value="add"/>

@@ -1,7 +1,7 @@
 package by.hardzeyeu.libraryV2.controllers;
 
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.implementations.BorrowServicesImpl;
+import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

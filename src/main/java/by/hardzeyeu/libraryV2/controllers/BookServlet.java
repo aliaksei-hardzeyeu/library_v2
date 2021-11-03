@@ -4,8 +4,10 @@ import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.implementations.BookServicesImpl;
-import by.hardzeyeu.libraryV2.services.implementations.BorrowServicesImpl;
+import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.services.impl.BookServicesImpl;
+import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
+import by.hardzeyeu.libraryV2.validators.BookValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(name = "BookServlet", value = "/")
@@ -95,7 +98,6 @@ public class BookServlet extends HttpServlet {
 
         request.setAttribute("book", book);
         request.setAttribute("listOfBorrows", listOfBorrows);
-        request.setAttribute("actionOnPage", "update");
         System.out.println("end OF view METHOD");
 
         request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
@@ -112,7 +114,7 @@ public class BookServlet extends HttpServlet {
         int pageCount = Integer.parseInt(request.getParameter("pageCount"));
         String isbn = request.getParameter("isbn");
         String des = request.getParameter("description");
-        String publDate = request.getParameter("publDate");
+        LocalDate publDate = LocalDate.parse(request.getParameter("publDate"));
         String authors = request.getParameter("authors");
         String genres = request.getParameter("genres");
         int amount = Integer.parseInt(request.getParameter("changeAmount")) + Integer.parseInt(request.getParameter("givenAmount"));
@@ -135,22 +137,20 @@ public class BookServlet extends HttpServlet {
         BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
         System.out.println("START OF ADD METHOD");
 
+        Book book = Utils.writeParamsIntoBookFromView(request, new Book());
+        BookValidator bookValidator = new BookValidator(request, response, book);
 
-        String title = request.getParameter("title");
-        String publisher = request.getParameter("publisher");
-        int pageCount = Integer.parseInt(request.getParameter("pageCount"));
-        String isbn = request.getParameter("isbn");
-        String des = request.getParameter("description");
-        String publDate = request.getParameter("publDate");
-        String authors = request.getParameter("authors");
-        String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("givenAmount"));
-        System.out.println("middle OF ADD METHOD");
+        if (bookValidator.validateAddForm()) {
+            bookServicesImpl.addBook(book);
 
-        bookServicesImpl.addBook(title, publisher, pageCount, isbn, des, publDate, authors, genres, amount);
-        System.out.println("end OF ADD METHOD");
+            request.setAttribute("action", null);
+            viewMainPage(request, response);
 
-        request.setAttribute("action", null);
-        viewMainPage(request, response);
+        } else {
+
+            request.getRequestDispatcher("WEB-INF/views/addBookPage.jsp").forward(request, response);
+        }
     }
+
+
 }

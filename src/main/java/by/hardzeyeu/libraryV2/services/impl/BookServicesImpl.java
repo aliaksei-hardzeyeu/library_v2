@@ -1,4 +1,4 @@
-package by.hardzeyeu.libraryV2.services.implementations;
+package by.hardzeyeu.libraryV2.services.impl;
 
 import by.hardzeyeu.libraryV2.dao.BookDAO;
 import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
@@ -9,7 +9,6 @@ import by.hardzeyeu.libraryV2.services.BorrowService;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class BookServicesImpl implements BookService {
     private static BookServicesImpl bookServicesImpl;
@@ -49,12 +48,11 @@ public class BookServicesImpl implements BookService {
         return listOfBooks;
     }
 
-    public void addBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                        String authors, String genres, int givenAmount) {
-        bookDAO.addBook(title, publisher, page_count, isbn, des, publDate, authors, genres, givenAmount);
+    public void addBook(Book book) {
+        bookDAO.addBook(book);
     }
 
-    public void updateBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
+    public void updateBook(String title, String publisher, int page_count, String isbn, String des, LocalDate publDate,
                            String authors, String genres, int amount, int book_id) {
         bookDAO.updateBook(title, publisher, page_count, isbn, des, publDate, authors, genres, amount, book_id);
     }

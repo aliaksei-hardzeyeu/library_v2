@@ -5,8 +5,8 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-@WebServlet(name = "ValidatorServlet", value = "/validator")
-public class ValidatorServlet extends HttpServlet {
+@WebServlet(name = "BorrowValidatorServlet", value = "/BorrowValidatorServlet")
+public class BorrowValidatorServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -15,8 +15,5 @@ public class ValidatorServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
-
-        request.getRequestDispatcher("/").forward(request, response);
     }
 }
