@@ -107,8 +107,7 @@ public class BookDAO {
         }
     }
 
-    public void updateBook(String title, String publisher, int page_count, String isbn, String des, LocalDate publDate,
-                           String authors, String genres, int amount, int book_id) {
+    public void updateBook(Book book) {
 
         String query = "UPDATE books SET title = ?, publisher = ?, page_count = ?, isbn = ?, des = ?, publ_date = ?, " +
                 "authors =?, genres = ?, amount = ? WHERE book_id = ?";
@@ -116,16 +115,16 @@ public class BookDAO {
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, publisher);
-            preparedStatement.setInt(3, page_count);
-            preparedStatement.setString(4, isbn);
-            preparedStatement.setString(5, des);
-            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(publDate));
-            preparedStatement.setString(7, authors);
-            preparedStatement.setString(8, genres);
-            preparedStatement.setInt(9, amount);
-            preparedStatement.setInt(10, book_id);
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getPublisher());
+            preparedStatement.setInt(3, book.getPageCount());
+            preparedStatement.setString(4, book.getIsbn());
+            preparedStatement.setString(5, book.getIsbn());
+            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(book.getPublDate()));
+            preparedStatement.setString(7, book.getAuthors());
+            preparedStatement.setString(8, book.getGenres());
+            preparedStatement.setInt(9, book.getGivenAmount());
+            preparedStatement.setInt(10, book.getBookId());
 
 
             preparedStatement.execute();

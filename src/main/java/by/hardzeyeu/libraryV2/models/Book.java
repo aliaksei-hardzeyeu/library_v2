@@ -55,6 +55,35 @@ public class Book {
     }
 
 
+    /**
+     * Constructor for adding new book and its validation
+     * With id
+     *
+     * @param title
+     * @param authors
+     * @param publisher
+     * @param genres
+     * @param pageCount
+     * @param isbn
+     * @param des
+     * @param publDate
+     */
+
+    public Book(String title, String publisher, int pageCount,
+                String isbn, String des, LocalDate publDate, String authors, String genres, int amount, int bookId) {
+        this.title = title;
+        this.authors = authors;
+        this.publisher = publisher;
+        this.genres = genres;
+        this.pageCount = pageCount;
+        this.isbn = isbn;
+        this.des = des;
+        this.publDate = publDate;
+        this.givenAmount = amount;
+        this.bookId = bookId;
+    }
+
+
 
     public int getCurrentlyAvailableAmount() {
         return currentlyAvailableAmount;

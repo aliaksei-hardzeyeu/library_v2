@@ -52,9 +52,8 @@ public class BookServicesImpl implements BookService {
         bookDAO.addBook(book);
     }
 
-    public void updateBook(String title, String publisher, int page_count, String isbn, String des, LocalDate publDate,
-                           String authors, String genres, int amount, int book_id) {
-        bookDAO.updateBook(title, publisher, page_count, isbn, des, publDate, authors, genres, amount, book_id);
+    public void updateBook(Book book) {
+        bookDAO.updateBook(book);
     }
 
     public void removeBook(int bookId) {

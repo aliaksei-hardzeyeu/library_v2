@@ -64,6 +64,7 @@ public class BookValidator {
 
         if (!isAmountValid(book.getGivenAmount())) {
             request.setAttribute("message8", "Amount must be positive integer");
+            request.setAttribute("message9", "You want to subtract too many copies - total amount is negative");
             errorCount++;
         }
         System.out.println(errorCount);
@@ -72,7 +73,7 @@ public class BookValidator {
 
 
         if (errorCount > 0) {
-            request.setAttribute("bookTemp", book);
+            request.setAttribute("book", book);
         return false;
         }
 

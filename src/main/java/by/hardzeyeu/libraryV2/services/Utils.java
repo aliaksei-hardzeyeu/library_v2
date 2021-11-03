@@ -52,13 +52,17 @@ public class Utils {
         book.setAuthors(request.getParameter("authors"));
         book.setGenres(request.getParameter("genres"));
 
+        if (request.getParameter("bookId") != null) {
+            book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+        }
+
 
         if (request.getParameter("action").equals("add")) {
             book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")));
 
         } else {
-            book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount") +
-                                Integer.parseInt(request.getParameter("changeAmount"))));
+            book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")) +
+                                Integer.parseInt(request.getParameter("changeAmount")));
 
         }
 

@@ -13,8 +13,7 @@ public interface BookService {
 
     void addBook(Book book);
 
-    void updateBook(String title, String publisher, int page_count, String isbn, String des, LocalDate publDate,
-                    String authors, String genres, int amount, int book_id);
+    void updateBook(Book book);
 
     void removeBook(int book_id);
 

@@ -109,21 +109,24 @@ public class BookServlet extends HttpServlet {
         System.out.println("START OF UPDATE METHOD");
         BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
-        String title = request.getParameter("title");
-        String publisher = request.getParameter("publisher");
-        int pageCount = Integer.parseInt(request.getParameter("pageCount"));
-        String isbn = request.getParameter("isbn");
-        String des = request.getParameter("description");
-        LocalDate publDate = LocalDate.parse(request.getParameter("publDate"));
-        String authors = request.getParameter("authors");
-        String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("changeAmount")) + Integer.parseInt(request.getParameter("givenAmount"));
-        int bookId = Integer.parseInt(request.getParameter("bookId"));
-        System.out.println("MIDDLE OF UPDATE METHOD");
 
-        bookServicesImpl.updateBook(title, publisher, pageCount, isbn, des, publDate, authors, genres, amount, bookId);
-        System.out.println("END OF UPDATE METHOD");
-        viewMainPage(request, response);
+        Book book = Utils.writeParamsIntoBookFromView(request, new Book());
+        BookValidator bookValidator = new BookValidator(request, response, book);
+
+        if (bookValidator.validateAddForm()) {
+            bookServicesImpl.updateBook(book);
+            System.out.println("END OF UPDATE METHOD");
+            viewMainPage(request, response);
+
+        } else {
+
+            request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
+        }
+
+
+
+
+
     }
 
     void removeBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
