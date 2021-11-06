@@ -3,6 +3,7 @@ package by.hardzeyeu.libraryV2.services;
 import by.hardzeyeu.libraryV2.models.Book;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 public interface BookService {
@@ -17,6 +18,6 @@ public interface BookService {
 
     void removeBook(int book_id);
 
-
+    List<Book> getListOfBooks(Book searchedBook);
 
 }

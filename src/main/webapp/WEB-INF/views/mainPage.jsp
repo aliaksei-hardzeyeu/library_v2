@@ -62,11 +62,11 @@
         </div>
     </c:forEach>
 
-
     <form class="button-add" action="${pageContext.request.contextPath}/" method="get">
         <input type="hidden" name="action" value="addNew"/>
         <input type="submit" name="add" value="ADD"/>
     </form>
+
 </div>
 <div>
     <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
@@ -93,8 +93,3 @@
 </body>
 
 </html>
-
-<%--                <a href="<%=request.getContextPath()%>/edit_book?book_id=<c:out value='${book.book_id}'/>"><c:out value="${book.title}"/></a>
-                <a href="<%=request.getContextPath()%>/remove_book?book_id=<c:out value='${book.book_id}'/>">Remove</a>
-
---%>

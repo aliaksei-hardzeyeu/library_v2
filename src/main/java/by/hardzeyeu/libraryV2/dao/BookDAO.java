@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BookDAO {
@@ -45,6 +46,34 @@ public class BookDAO {
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
+
+            while (result.next()) {
+                Book book = new Book();
+
+                Utils.writeParamsIntoBookFromDb(result, book);
+
+                listOfBooks.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listOfBooks;
+    }
+
+    public List<Book> getListOfBooks(HashMap<String, String> searchParameters) {
+        List<Book> listOfBooks = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE title LIKE ? AND authors LIKE ? AND genres LIKE ? AND des LIKE ?";
+
+        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setString(1, searchParameters.get("title"));
+            preparedStatement.setString(2, searchParameters.get("authors"));
+            preparedStatement.setString(3, searchParameters.get("genres"));
+            preparedStatement.setString(4, searchParameters.get("des"));
+
+            ResultSet result = preparedStatement.executeQuery();
 
             while (result.next()) {
                 Book book = new Book();

@@ -87,6 +87,23 @@ public class Book {
     }
 
 
+    /**
+     * Constructor for searching
+     *
+     * @param title
+     * @param authors
+     * @param genres
+     * @param des
+     */
+
+    public Book(String title, String authors, String genres, String des) {
+        this.title = title;
+        this.authors = authors;
+        this.genres = genres;
+        this.des = des;
+    }
+
+
     public int getChangeAmount() {
         return changeAmount;
     }

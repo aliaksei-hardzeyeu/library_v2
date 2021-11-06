@@ -6,9 +6,10 @@ import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
 
-import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookServicesImpl implements BookService {
     private static BookServicesImpl bookServicesImpl;
@@ -41,10 +42,55 @@ public class BookServicesImpl implements BookService {
         BorrowService borrowService = BorrowServicesImpl.getInstance();
         List<Book> listOfBooks = bookDAO.getListOfBooks();
 
-        for (Book book:listOfBooks) {
+        for (Book book : listOfBooks) {
             BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
             setBookStatusProperties(book, bookBorrowsInfo);
             setBookBorrowStatusAndAmounts(book);
+        }
+
+        return listOfBooks;
+    }
+
+
+    /**
+     * Searchs for books with given parameters
+     *
+     * @param searchedBook - book model with searched parameters
+     * @return
+     */
+
+    public List<Book> getListOfBooks(Book searchedBook) {
+        BorrowService borrowService = BorrowServicesImpl.getInstance();
+        List<Book> listOfBooks;
+
+        String title = searchedBook.getTitle();
+        String authors = searchedBook.getAuthors();
+        String genres = searchedBook.getGenres();
+        String des = searchedBook.getDes();
+
+        if (title.equals("") && authors.equals("") && genres.equals("") && des.equals("")) {
+            listOfBooks = getListOfBooks();
+
+            return listOfBooks;
+
+        } else {
+
+            HashMap<String, String> searchParameters = new HashMap<>();
+            searchParameters.put("title", searchedBook.getTitle());
+            searchParameters.put("authors", searchedBook.getAuthors());
+            searchParameters.put("genres", searchedBook.getGenres());
+            searchParameters.put("des", searchedBook.getDes());
+
+
+            parseParametersToFitSqlStatement(searchParameters);
+
+            listOfBooks = bookDAO.getListOfBooks(searchParameters);
+
+            for (Book book : listOfBooks) {
+                BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
+                setBookStatusProperties(book, bookBorrowsInfo);
+                setBookBorrowStatusAndAmounts(book);
+            }
         }
 
         return listOfBooks;
@@ -69,7 +115,7 @@ public class BookServicesImpl implements BookService {
      * @param book
      */
 
-    public void setBookStatusProperties (Book book, BookBorrowsInfo bookBorrowsInfo) {
+    public void setBookStatusProperties(Book book, BookBorrowsInfo bookBorrowsInfo) {
         book.setDamaged(bookBorrowsInfo.getDamaged());
         book.setLost(bookBorrowsInfo.getLost());
         book.setReturned(bookBorrowsInfo.getReturned());
@@ -100,5 +146,22 @@ public class BookServicesImpl implements BookService {
     }
 
 
+    /**
+     * Parses raw parameters from search form to fit sql statement
+     *
+     * @param searchParameters
+     * @return
+     */
 
+    HashMap<String, String> parseParametersToFitSqlStatement(HashMap<String, String> searchParameters) {
+        for (Map.Entry<String, String> entry : searchParameters.entrySet()) {
+            if (entry.getValue().equals("")) {
+                entry.setValue("%");
+            } else {
+                entry.setValue("%" + entry.getValue() + "%");
+            }
+        }
+
+        return searchParameters;
+    }
 }
