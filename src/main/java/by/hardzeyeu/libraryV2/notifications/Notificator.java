@@ -13,7 +13,7 @@ public class Notificator {
     public static void main(String[] args) {
 
         final String username = "lesnoylibrarybot";
-        final String password = "120986tryN";
+        final String password = "******";
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
