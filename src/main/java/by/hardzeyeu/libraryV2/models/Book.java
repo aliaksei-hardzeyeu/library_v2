@@ -1,6 +1,7 @@
 package by.hardzeyeu.libraryV2.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class Book {
     private int bookId;
@@ -16,19 +17,23 @@ public class Book {
     private int givenAmount;
 
     private int currentlyAvailableAmount;
-    private int realAmount;
+    private int copiesExistingAmount;
     private int damaged;
     private int lost;
     private int returned;
     private int borrowed;
-    private LocalDate closestAvailableDate;
+    private List<LocalDate> dueDatesWithoutStatus;
+
+    private int changeAmount;
 
     public Book() {
     }
 
 
     /**
-     * Constructor isn`t complete!!!!!
+     * Constructor for adding new book and its validation
+     * Without id
+     *
      * @param title
      * @param authors
      * @param publisher
@@ -38,9 +43,9 @@ public class Book {
      * @param des
      * @param publDate
      */
-    //constructor without id!
-    public Book(String title, String authors, String publisher, String genres,
-                int pageCount, String isbn, String des, LocalDate publDate, int amount) {
+
+    public Book(String title, String publisher, int pageCount,
+                String isbn, String des, LocalDate publDate, String authors, String genres, int amount) {
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -49,8 +54,63 @@ public class Book {
         this.isbn = isbn;
         this.des = des;
         this.publDate = publDate;
+        this.givenAmount = amount;
     }
 
+
+    /**
+     * Constructor for adding new book and its validation
+     * With id
+     *
+     * @param title
+     * @param authors
+     * @param publisher
+     * @param genres
+     * @param pageCount
+     * @param isbn
+     * @param des
+     * @param publDate
+     */
+
+    public Book(String title, String publisher, int pageCount,
+                String isbn, String des, LocalDate publDate, String authors, String genres, int amount, int bookId) {
+        this.title = title;
+        this.authors = authors;
+        this.publisher = publisher;
+        this.genres = genres;
+        this.pageCount = pageCount;
+        this.isbn = isbn;
+        this.des = des;
+        this.publDate = publDate;
+        this.givenAmount = amount;
+        this.bookId = bookId;
+    }
+
+
+    /**
+     * Constructor for searching
+     *
+     * @param title
+     * @param authors
+     * @param genres
+     * @param des
+     */
+
+    public Book(String title, String authors, String genres, String des) {
+        this.title = title;
+        this.authors = authors;
+        this.genres = genres;
+        this.des = des;
+    }
+
+
+    public int getChangeAmount() {
+        return changeAmount;
+    }
+
+    public void setChangeAmount(int changeAmount) {
+        this.changeAmount = changeAmount;
+    }
 
     public int getCurrentlyAvailableAmount() {
         return currentlyAvailableAmount;
@@ -100,20 +160,20 @@ public class Book {
         this.givenAmount = givenAmount;
     }
 
-    public int getRealAmount() {
-        return realAmount;
+    public int getCopiesExistingAmount() {
+        return copiesExistingAmount;
     }
 
-    public void setRealAmount(int realAmount) {
-        this.realAmount = realAmount;
+    public void setCopiesExistingAmount(int copiesExistingAmount) {
+        this.copiesExistingAmount = copiesExistingAmount;
     }
 
-    public LocalDate getClosestAvailableDate() {
-        return closestAvailableDate;
+    public List<LocalDate> getDueDatesWithoutStatus() {
+        return dueDatesWithoutStatus;
     }
 
-    public void setClosestAvailableDate(LocalDate closestAvailableDate) {
-        this.closestAvailableDate = closestAvailableDate;
+    public void setDueDatesWithoutStatus(List <LocalDate> dueDatesWithoutStatus) {
+        this.dueDatesWithoutStatus = dueDatesWithoutStatus;
     }
 
     public int getBookId() {

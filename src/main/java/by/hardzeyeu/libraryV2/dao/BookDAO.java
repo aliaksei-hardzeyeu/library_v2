@@ -3,13 +3,13 @@ package by.hardzeyeu.libraryV2.dao;
 import by.hardzeyeu.libraryV2.connection.C3P0DataSource;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.services.Utils;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BookDAO {
@@ -26,7 +26,7 @@ public class BookDAO {
             ResultSet result = preparedStatement.executeQuery();
 
             result.next();
-            writeParamsToBook(result, book);
+            Utils.writeParamsIntoBookFromDb(result, book);
 
 
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class BookDAO {
             while (result.next()) {
                 Book book = new Book();
 
-                writeParamsToBook(result, book);
+                Utils.writeParamsIntoBookFromDb(result, book);
 
                 listOfBooks.add(book);
             }
@@ -59,46 +59,52 @@ public class BookDAO {
         return listOfBooks;
     }
 
-    /**
-     * Method for writing parameters from DB to book model
-     *
-     * @param result
-     * @param book
-     * @throws SQLException
-     */
-    private void writeParamsToBook(ResultSet result, Book book) throws SQLException {
-        book.setBookId(result.getInt("book_id"));
-        book.setTitle(result.getString("title"));
-        book.setPublisher(result.getString("publisher"));
-        book.setPageCount(result.getInt("page_count"));
-        book.setIsbn(result.getString("isbn"));
-        book.setDes(result.getString("des"));
-        book.setPublDate(Utils.convertToLocalDateViaSqlDate(result.getDate("publ_date")));
-        book.setStatus(result.getString("status"));
-        book.setAuthors(result.getString("authors"));
-        book.setGenres(result.getString("genres"));
-        book.setGivenAmount(result.getInt("amount"));
+
+    public List<Book> getListOfBooks(HashMap<String, String> searchParameters) {
+        List<Book> listOfBooks = new ArrayList<>();
+        String query = "SELECT * FROM books WHERE title LIKE ? AND authors LIKE ? AND genres LIKE ? AND des LIKE ?";
+
+        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            preparedStatement.setString(1, searchParameters.get("title"));
+            preparedStatement.setString(2, searchParameters.get("authors"));
+            preparedStatement.setString(3, searchParameters.get("genres"));
+            preparedStatement.setString(4, searchParameters.get("des"));
+
+            ResultSet result = preparedStatement.executeQuery();
+
+            while (result.next()) {
+                Book book = new Book();
+
+                Utils.writeParamsIntoBookFromDb(result, book);
+
+                listOfBooks.add(book);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listOfBooks;
     }
 
 
-    public void addBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                        String authors, String genres, int givenAmount) {
-
+    public void addBook(Book book) {
         String query = "INSERT INTO books (title, publisher, page_count, isbn, des, publ_date, authors, genres, amount)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, publisher);
-            preparedStatement.setInt(3, page_count);
-            preparedStatement.setString(4, isbn);
-            preparedStatement.setString(5, des);
-            preparedStatement.setString(6, publDate);
-            preparedStatement.setString(7, authors);
-            preparedStatement.setString(8, genres);
-            preparedStatement.setInt(9, givenAmount);
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getPublisher());
+            preparedStatement.setInt(3, book.getPageCount());
+            preparedStatement.setString(4, book.getIsbn());
+            preparedStatement.setString(5, book.getDes());
+            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(book.getPublDate()));
+            preparedStatement.setString(7, book.getAuthors());
+            preparedStatement.setString(8, book.getGenres());
+            preparedStatement.setInt(9, book.getGivenAmount());
 
             preparedStatement.execute();
 
@@ -107,8 +113,8 @@ public class BookDAO {
         }
     }
 
-    public void updateBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                           String authors, String genres, int amount, int book_id) {
+
+    public void updateBook(Book book) {
 
         String query = "UPDATE books SET title = ?, publisher = ?, page_count = ?, isbn = ?, des = ?, publ_date = ?, " +
                 "authors =?, genres = ?, amount = ? WHERE book_id = ?";
@@ -116,16 +122,16 @@ public class BookDAO {
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, publisher);
-            preparedStatement.setInt(3, page_count);
-            preparedStatement.setString(4, isbn);
-            preparedStatement.setString(5, des);
-            preparedStatement.setString(6, publDate);
-            preparedStatement.setString(7, authors);
-            preparedStatement.setString(8, genres);
-            preparedStatement.setInt(9, amount);
-            preparedStatement.setInt(10, book_id);
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getPublisher());
+            preparedStatement.setInt(3, book.getPageCount());
+            preparedStatement.setString(4, book.getIsbn());
+            preparedStatement.setString(5, book.getDes());
+            preparedStatement.setDate(6, Utils.convertToSqlDateFromLocalDate(book.getPublDate()));
+            preparedStatement.setString(7, book.getAuthors());
+            preparedStatement.setString(8, book.getGenres());
+            preparedStatement.setInt(9, book.getGivenAmount() + book.getChangeAmount());
+            preparedStatement.setInt(10, book.getBookId());
 
 
             preparedStatement.execute();
@@ -133,8 +139,8 @@ public class BookDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
 
     public void removeBook(int book_id) {
         String query = "DELETE FROM books WHERE book_id = ?";

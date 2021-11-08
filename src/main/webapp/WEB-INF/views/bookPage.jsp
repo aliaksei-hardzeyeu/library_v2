@@ -22,36 +22,43 @@
 
         <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="<c:out value="${book.title}"/>" required="required"><br>
+            <input type="text" id="title" name="title" value="<c:out value="${book.title}"/>" required="required">${message1}<br>
 
             <label for="authors">Author:</label>
-            <input type="text" id="authors" name="authors" value="<c:out value="${book.authors}"/>"required="required"><br>
+            <input type="text" id="authors" name="authors" value="<c:out value="${book.authors}"/>"required="required">${message2}<br>
 
             <label for="publisher">Publisher:</label>
-            <input type="text" id="publisher" name="publisher" value="<c:out value="${book.publisher}"/>"required="required"><br>
+            <input type="text" id="publisher" name="publisher" value="<c:out value="${book.publisher}"/>"required="required">${message3}<br>
 
             <label for="publDate">Publication date:</label>
-            <input type="date" id="publDate" name="publDate" value="<c:out value="${book.publDate}"/>"required="required"><br>
+            <input type="date" id="publDate" name="publDate" value="<c:out value="${book.publDate}"/>"required="required">${message4}<br>
 
             <label for="genres">Genre:</label>
-            <input type="text" id="genres" name="genres" value="<c:out value="${book.genres}"/>"required="required"><br>
+            <input type="text" id="genres" name="genres" value="<c:out value="${book.genres}"/>"required="required">${message5}<br>
 
             <label for="pageCount">Page count:</label>
-            <input type="number" id="pageCount" name="pageCount" value="<c:out value="${book.pageCount}"/>"required="required"><br>
+            <input type="number" id="pageCount" name="pageCount" value="<c:out value="${book.pageCount}"/>"required="required">${message6}<br>
 
             <label for="isbn">ISBN:</label>
-            <input type="text" id="isbn" name="isbn" value="<c:out value="${book.isbn}"/>"required="required"><br>
+            <input type="text" id="isbn" name="isbn" value="<c:out value="${book.isbn}"/>"required="required">${message7}<br>
 
             <label for="description">Description:</label>
-            <input type="text" id="description" name="description" value="<c:out value="${book.des}"/>"><br>
+            <input type="text" id="description" name="description" value="<c:out value="${book.des}"/>">${message8}<br>
 
             <label for="amount">Total amount:</label>
-            <input type="number" id="amount" name="amount" value="<c:out value="${book.realAmount}"/>" readonly><br>
+            <input type="number" id="amount" name="amount" value="<c:out value="${book.copiesExistingAmount}"/>" readonly><br>
 
             <label for="changeAmount">Change amount(Enter +n or -n):</label>
-            <input type="number" id="changeAmount" name="changeAmount" value="0" required><br>
+            <input type="number" id="changeAmount" name="changeAmount" value="0" required>${message9}<br>
 
             <input type="hidden" id="givenAmount" name="givenAmount" value="<c:out value="${book.givenAmount}"/>"><br>
+<%--            for all amounts from model--%>
+<%--            <input type="hidden" id="givenAmount" name="givenAmount" value="<c:out value="${book.copiesExistingAmount}"/>"><br>--%>
+            <input type="hidden" id="borrowed" name="borrowed" value="<c:out value="${book.borrowed}"/>"><br>
+            <input type="hidden" id="damaged" name="damaged" value="<c:out value="${book.damaged}"/>"><br>
+            <input type="hidden" id="lost" name="lost" value="<c:out value="${book.lost}"/>"><br>
+            <input type="hidden" id="returned" name="returned" value="<c:out value="${book.returned}"/>"><br>
+            <input type="hidden" id="currentlyAvailableAmount" name="currentlyAvailableAmount" value="<c:out value="${book.currentlyAvailableAmount}"/>"><br>
 
             <label for="status">Status:</label>
             <input type="text" id="status" name="status" value="<c:out value="${book.status}"/>" readonly><br>
@@ -165,7 +172,17 @@
 
         </c:forEach>
 
-        <a href="#openModal1111">!!!!Add borrow!!!!</a>
+        <c:choose>
+            <c:when test="${book.currentlyAvailableAmount > 0}">
+                <a href="#openModal1111">!!!!Add borrow!!!!</a>
+                <br />
+            </c:when>
+            <c:otherwise>
+                U can`t borrow book, dude. No copies left.
+                <br />
+            </c:otherwise>
+        </c:choose>
+
 
         <div id="openModal1111" class="modal">
             <div class="modal-dialog">
@@ -188,8 +205,22 @@
                                 <input type="text" id="name" name="name" value="" required="required"><br>
 
 
-                                <label for="period">Time period:</label>
-                                <input type="int" id="period" name="period" value="" required="required"><br>
+                                <p>Choose time period</p>
+
+                                <input type="radio" id="period1" name="period" value="1" required="required">
+                                <label for="period1">1 month</label><br>
+
+                                <input type="radio" id="period2" name="period" value="2">
+                                <label for="period2">2 months</label><br>
+
+                                <input type="radio" id="period3" name="period" value="3">
+                                <label for="period3">3 months</label><br>
+
+                                <input type="radio" id="period6" name="period" value="6">
+                                <label for="period6">6 month</label><br>
+
+                                <input type="radio" id="period12" name="period" value="12">
+                                <label for="period1">12 months</label><br>
 
 
                                 <label for="comment">Comment:</label>

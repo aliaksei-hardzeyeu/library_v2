@@ -2,6 +2,8 @@ package by.hardzeyeu.libraryV2.services;
 
 import by.hardzeyeu.libraryV2.models.Book;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 public interface BookService {
@@ -10,14 +12,12 @@ public interface BookService {
 
     List<Book> getListOfBooks();
 
-    void addBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                 String authors, String genres, int amount);
+    void addBook(Book book);
 
-    void updateBook(String title, String publisher, int page_count, String isbn, String des, String publDate,
-                    String authors, String genres, int amount, int book_id);
+    void updateBook(Book book);
 
     void removeBook(int book_id);
 
-
+    List<Book> getListOfBooks(Book searchedBook);
 
 }

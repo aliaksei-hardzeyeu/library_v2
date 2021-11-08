@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,11 +67,14 @@ public class BorrowDAO {
 
     public void addBorrow(int bookId, String userName, String userEmail, Date borrowDate, int timePeriod, String comment) {
 
-        String query = "INSERT INTO borrows (book_id, user_name, user_email, borrow_date, time_period," +
-                " comment) VALUES (?, ?, ?, ?, ?, ?)";
+        String query1 = "INSERT INTO borrows (book_id, user_name, user_email, borrow_date, time_period," +
+                " comment, due_date) VALUES (?, ?, ?, ?, ?, ?, (date_add(borrow_date, interval time_period month)))";
+
+        String query2 = "INSERT INTO library_v2.borrows (due_date) VALUES (date_add(borrow_date, INTERVAL time_period MONTH )) " +
+                        "WHERE return_date IS NULL ";
 
         try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(query1);
 
             preparedStatement.setInt(1, bookId);
             preparedStatement.setString(2, userName);
@@ -81,10 +85,15 @@ public class BorrowDAO {
 
             preparedStatement.execute();
 
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query2);
+
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Changes borrow status and sets return date.
@@ -111,14 +120,13 @@ public class BorrowDAO {
         }
     }
 
+
     /**
      * Retrieves number of damaged, lost, returned, borrowed instances of book. And puts in borrowDates
      *
      * @param book
      * @return
      */
-    //todo , РАЗДЕЛИТЬ НАВЕРНОЕ ВСЁ ЭТО НА МЕТОДЫ
-    //todo ОСТАВИТЬ ЗДЕСЬ ТОЛЬКО ДАО, ВСЁ ОСТАЛЬНОЕ В СЕРВИСЫ
 
     public BookBorrowsInfo getBookBorrowsInfo(Book book) {
 
@@ -165,5 +173,119 @@ public class BorrowDAO {
         }
 
         return bookBorrowsInfo;
+    }
+
+
+    /**
+     * Gets list of borrows to return in week
+     *
+     * @return
+     */
+
+    public List<Borrow> getBorrowsToReturnInWeek() {
+        List<Borrow> borrowsToReturnInWeek = new ArrayList<>();
+
+        String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
+                "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
+                "and date_add(curdate(), INTERVAL 7 day) = due_date";
+
+        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
+
+            Statement statement = connection.createStatement();
+
+            ResultSet result = statement.executeQuery(query);
+
+            while (result.next()) {
+                Borrow borrow = new Borrow();
+
+                borrow.setBookId(result.getInt("book_id"));
+                borrow.setTitle(result.getString("title"));
+                borrow.setUserName(result.getString("user_name"));
+                borrow.setUserEmail(result.getString("user_email"));
+                borrow.setDueDate(convertToLocalDateViaSqlDate(result.getDate("due_date")));
+
+                borrowsToReturnInWeek.add(borrow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+            return borrowsToReturnInWeek;
+    }
+
+
+    /**
+     * Gets list of borrows to return tomorrow
+     *
+     * @return
+     */
+
+    public List<Borrow> getBorrowsToReturnTomorrow() {
+        List<Borrow> borrowsToReturnTomorrow = new ArrayList<>();
+
+        String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
+                "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
+                "and date_add(curdate(), INTERVAL 1 day) = due_date";
+
+        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
+
+            Statement statement = connection.createStatement();
+
+            ResultSet result = statement.executeQuery(query);
+
+            while (result.next()) {
+                Borrow borrow = new Borrow();
+
+                borrow.setBookId(result.getInt("book_id"));
+                borrow.setTitle(result.getString("title"));
+                borrow.setUserName(result.getString("user_name"));
+                borrow.setUserEmail(result.getString("user_email"));
+                borrow.setDueDate(convertToLocalDateViaSqlDate(result.getDate("due_date")));
+
+                borrowsToReturnTomorrow.add(borrow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return borrowsToReturnTomorrow;
+    }
+
+
+    /**
+     * Gets list of expired borrows
+     *
+     * @return
+     */
+
+    public List<Borrow> getBorrowsToReturnYesterday() {
+        List<Borrow> borrowsToReturnYesterday = new ArrayList<>();
+
+        String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
+                "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
+                "and date_sub(curdate(), INTERVAL 1 day) = due_date";
+
+        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
+
+            Statement statement = connection.createStatement();
+
+            ResultSet result = statement.executeQuery(query);
+
+            while (result.next()) {
+                Borrow borrow = new Borrow();
+
+                borrow.setBookId(result.getInt("book_id"));
+                borrow.setTitle(result.getString("title"));
+                borrow.setUserName(result.getString("user_name"));
+                borrow.setUserEmail(result.getString("user_email"));
+                borrow.setDueDate(convertToLocalDateViaSqlDate(result.getDate("due_date")));
+
+                borrowsToReturnYesterday.add(borrow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return borrowsToReturnYesterday;
     }
 }

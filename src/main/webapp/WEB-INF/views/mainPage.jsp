@@ -50,7 +50,7 @@
                 <c:out value="${book.publDate}"/>
             </div>
             <div class="cell">
-                <c:out value="${book.realAmount}"/>
+                <c:out value="${book.copiesExistingAmount}"/>
             </div>
             <div class="cell">
                 <form action="${pageContext.request.contextPath}/" method="post">
@@ -62,10 +62,30 @@
         </div>
     </c:forEach>
 
-
     <form class="button-add" action="${pageContext.request.contextPath}/" method="get">
         <input type="hidden" name="action" value="addNew"/>
         <input type="submit" name="add" value="ADD"/>
+    </form>
+
+</div>
+<div>
+    <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
+       <p>Search box</p>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title"><br>
+
+        <label for="authors">Author:</label>
+        <input type="text" id="authors" name="authors"><br>
+
+        <label for="genres">Genres:</label>
+        <input type="text" id="genres" name="genres"><br>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description"><br>
+
+        <input type="hidden" name="action" value="search"/>
+
+        <input type="submit" form="send-values" name="update"/>
     </form>
 </div>
 
@@ -73,8 +93,3 @@
 </body>
 
 </html>
-
-<%--                <a href="<%=request.getContextPath()%>/edit_book?book_id=<c:out value='${book.book_id}'/>"><c:out value="${book.title}"/></a>
-                <a href="<%=request.getContextPath()%>/remove_book?book_id=<c:out value='${book.book_id}'/>">Remove</a>
-
---%>

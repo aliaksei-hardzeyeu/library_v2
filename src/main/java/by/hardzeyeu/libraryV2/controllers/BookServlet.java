@@ -4,9 +4,10 @@ import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.implementations.BookServicesImpl;
-import by.hardzeyeu.libraryV2.services.implementations.BorrowServicesImpl;
-
+import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.services.impl.BookServicesImpl;
+import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
+import by.hardzeyeu.libraryV2.validators.BookValidator;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,8 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+
 @WebServlet(name = "BookServlet", value = "/")
 public class BookServlet extends HttpServlet {
+    private BookService bookServicesImpl;
+    private BorrowService borrowServiceImpl;
+
+
+    @Override
+    public void init() {
+        bookServicesImpl = BookServicesImpl.getInstance();
+        borrowServiceImpl = BorrowServicesImpl.getInstance();
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,6 +48,9 @@ public class BookServlet extends HttpServlet {
             case "add":
                 addBook(request, response);
                 break;
+
+            case "search":
+                searchBook(request, response);
         }
     }
 
@@ -63,7 +78,7 @@ public class BookServlet extends HttpServlet {
 
     void viewMainPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("start of viewMainPage method");
-        BookService bookServicesImpl = BookServicesImpl.getInstance();
+//        BookService bookServicesImpl = BookServicesImpl.getInstance();
         List<Book> listOfBooks = bookServicesImpl.getListOfBooks();
         request.setAttribute("listOfBooks", listOfBooks);
         System.out.println("end of viewMainPage method");
@@ -82,8 +97,8 @@ public class BookServlet extends HttpServlet {
 
         int bookId = Integer.parseInt(request.getParameter("bookId"));
 
-        BookService bookServicesImpl = BookServicesImpl.getInstance();
-        BorrowService borrowServiceImpl = BorrowServicesImpl.getInstance();
+//        BookService bookServicesImpl = BookServicesImpl.getInstance();
+//        BorrowService borrowServiceImpl = BorrowServicesImpl.getInstance();
         System.out.println("2 OF view METHOD");
 
 
@@ -95,62 +110,73 @@ public class BookServlet extends HttpServlet {
 
         request.setAttribute("book", book);
         request.setAttribute("listOfBorrows", listOfBorrows);
-        request.setAttribute("actionOnPage", "update");
         System.out.println("end OF view METHOD");
 
         request.getRequestDispatcher("WEB-INF/views/bookPage.jsp").forward(request, response);
     }
 
 
-
     void updateBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("START OF UPDATE METHOD");
-        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
+//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
-        String title = request.getParameter("title");
-        String publisher = request.getParameter("publisher");
-        int pageCount = Integer.parseInt(request.getParameter("pageCount"));
-        String isbn = request.getParameter("isbn");
-        String des = request.getParameter("description");
-        String publDate = request.getParameter("publDate");
-        String authors = request.getParameter("authors");
-        String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("changeAmount")) + Integer.parseInt(request.getParameter("givenAmount"));
-        int bookId = Integer.parseInt(request.getParameter("bookId"));
-        System.out.println("MIDDLE OF UPDATE METHOD");
 
-        bookServicesImpl.updateBook(title, publisher, pageCount, isbn, des, publDate, authors, genres, amount, bookId);
-        System.out.println("END OF UPDATE METHOD");
-        viewMainPage(request, response);
+        Book book = Utils.writeParamsIntoBookFromUpdateForm(request, new Book());
+        BookValidator bookValidator = new BookValidator(request, book);
+
+        if (bookValidator.validateUpdateForm()) {
+            bookServicesImpl.updateBook(book);
+            System.out.println("END OF UPDATE METHOD");
+            viewMainPage(request, response);
+
+        } else {
+
+            viewBook(request, response);
+        }
     }
 
     void removeBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
+//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
         bookServicesImpl.removeBook(Integer.parseInt(request.getParameter("bookId")));
         viewMainPage(request, response);
     }
 
     void addBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
+//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
         System.out.println("START OF ADD METHOD");
 
+        Book book = Utils.writeParamsIntoBookFromAddForm(request, new Book());
+        BookValidator bookValidator = new BookValidator(request, book);
 
-        String title = request.getParameter("title");
-        String publisher = request.getParameter("publisher");
-        int pageCount = Integer.parseInt(request.getParameter("pageCount"));
-        String isbn = request.getParameter("isbn");
-        String des = request.getParameter("description");
-        String publDate = request.getParameter("publDate");
-        String authors = request.getParameter("authors");
-        String genres = request.getParameter("genres");
-        int amount = Integer.parseInt(request.getParameter("givenAmount"));
-        System.out.println("middle OF ADD METHOD");
+        if (bookValidator.validateAddForm()) {
+            bookServicesImpl.addBook(book);
 
-        bookServicesImpl.addBook(title, publisher, pageCount, isbn, des, publDate, authors, genres, amount);
-        System.out.println("end OF ADD METHOD");
+            request.setAttribute("action", null);
+            viewMainPage(request, response);
 
-        request.setAttribute("action", null);
-        viewMainPage(request, response);
+        } else {
+
+            request.getRequestDispatcher("WEB-INF/views/addBookPage.jsp").forward(request, response);
+        }
     }
+
+    void searchBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("end-end of search method");
+
+//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
+
+        Book book = Utils.writeParamsIntoBookFromViewForSearch(request, new Book());
+
+
+        List<Book> listOfBooks = bookServicesImpl.getListOfBooks(book);
+
+        request.setAttribute("listOfBooks", listOfBooks);
+        request.setAttribute("searchExecuted", true);
+        System.out.println("end of search method");
+
+        request.getRequestDispatcher("WEB-INF/views/mainPage.jsp").forward(request, response);
+    }
+
+
 }
