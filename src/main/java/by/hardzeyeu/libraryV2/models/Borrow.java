@@ -14,6 +14,24 @@ public class Borrow {
     LocalDate dueDate;
     LocalDate returnDate;
     LocalDate changedStatusDate;
+    String title;
+    String notification;
+
+    public String getNotification() {
+        return notification;
+    }
+
+    public void setNotification(String notification) {
+        this.notification = notification;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public LocalDate getChangedStatusDate() {
         return changedStatusDate;
