@@ -2,13 +2,13 @@ package by.hardzeyeu.libraryV2.controllers;
 
 import by.hardzeyeu.libraryV2.services.BorrowService;
 import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 
 @WebServlet(name = "BorrowServlet", value = "/borrow")
 public class BorrowServlet extends HttpServlet {
@@ -50,8 +50,7 @@ public class BorrowServlet extends HttpServlet {
         borrowService.addBorrow(bookId, userName, userEmail, timePeriod, comment);
 
         System.out.println("addborrow 3");
-//TODO CHANGE LOCALHOST TO NOT HARDCODED
-        response.sendRedirect("http://localhost:8081/?action=viewExisting&bookId=" + bookId);
+        response.sendRedirect(request.getContextPath() + "/?action=viewExisting&bookId=" + bookId);
     }
 
 
@@ -62,8 +61,7 @@ public class BorrowServlet extends HttpServlet {
         borrowService.changeBorrowStatusSetReturnDate(request.getParameter("status"), Integer.parseInt(request.getParameter("borrowId")));
         System.out.println("addborrow 1");
 
-//TODO CHANGE LOCALHOST TO NOT HARDCODED
-        response.sendRedirect("http://localhost:8081/?action=viewExisting&bookId=" + request.getParameter("bookId"));
+        response.sendRedirect(request.getContextPath() + "/?action=viewExisting&bookId=" + request.getParameter("bookId"));
 
     }
 }

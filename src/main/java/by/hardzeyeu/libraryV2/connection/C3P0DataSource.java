@@ -1,12 +1,12 @@
 package by.hardzeyeu.libraryV2.connection;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class C3P0DataSource {
+
+public class C3P0DataSource implements AutoCloseable{
     private static final String URL = "jdbc:mysql://localhost:3306/library_v2";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
@@ -40,5 +40,10 @@ public class C3P0DataSource {
             e.printStackTrace();
         }
         return con;
+    }
+
+    @Override
+    public void close() throws Exception {
+        dataSource.close();
     }
 }

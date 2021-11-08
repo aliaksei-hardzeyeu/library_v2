@@ -3,13 +3,11 @@ package by.hardzeyeu.libraryV2.dao;
 import by.hardzeyeu.libraryV2.connection.C3P0DataSource;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.services.Utils;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +59,7 @@ public class BookDAO {
         return listOfBooks;
     }
 
+
     public List<Book> getListOfBooks(HashMap<String, String> searchParameters) {
         List<Book> listOfBooks = new ArrayList<>();
         String query = "SELECT * FROM books WHERE title LIKE ? AND authors LIKE ? AND genres LIKE ? AND des LIKE ?";
@@ -90,9 +89,7 @@ public class BookDAO {
     }
 
 
-
     public void addBook(Book book) {
-
         String query = "INSERT INTO books (title, publisher, page_count, isbn, des, publ_date, authors, genres, amount)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -115,6 +112,7 @@ public class BookDAO {
             e.printStackTrace();
         }
     }
+
 
     public void updateBook(Book book) {
 
@@ -141,8 +139,8 @@ public class BookDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
 
     public void removeBook(int book_id) {
         String query = "DELETE FROM books WHERE book_id = ?";
