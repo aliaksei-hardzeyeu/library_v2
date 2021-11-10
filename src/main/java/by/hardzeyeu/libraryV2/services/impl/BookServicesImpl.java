@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class BookServicesImpl implements BookService {
     private static BookServicesImpl bookServicesImpl;
     private BookDAO bookDAO;
@@ -37,6 +38,7 @@ public class BookServicesImpl implements BookService {
 
         return book;
     }
+
 
     public List<Book> getListOfBooks() {
         BorrowService borrowService = BorrowServicesImpl.getInstance();
@@ -96,13 +98,16 @@ public class BookServicesImpl implements BookService {
         return listOfBooks;
     }
 
+
     public void addBook(Book book) {
         bookDAO.addBook(book);
     }
 
+
     public void updateBook(Book book) {
         bookDAO.updateBook(book);
     }
+
 
     public void removeBook(int bookId) {
         bookDAO.removeBook(bookId);
@@ -123,6 +128,7 @@ public class BookServicesImpl implements BookService {
 
         book.setDueDatesWithoutStatus(bookBorrowsInfo.getDueDatesWithoutStatus());
     }
+
 
     /**
      * Computes status of book: available/unavailable; counts available amount, closest due date if
@@ -163,5 +169,10 @@ public class BookServicesImpl implements BookService {
         }
 
         return searchParameters;
+    }
+
+
+    public int getBookId(Book book) {
+        return bookDAO.getBookId(book);
     }
 }

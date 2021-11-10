@@ -8,15 +8,21 @@ import by.hardzeyeu.libraryV2.services.Utils;
 import by.hardzeyeu.libraryV2.services.impl.BookServicesImpl;
 import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
 import by.hardzeyeu.libraryV2.validators.BookValidator;
+
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 
+@MultipartConfig(maxFileSize = 1024 * 1024 * 2)
 @WebServlet(name = "BookServlet", value = "/")
 public class BookServlet extends HttpServlet {
     private BookService bookServicesImpl;
@@ -78,7 +84,6 @@ public class BookServlet extends HttpServlet {
 
     void viewMainPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("start of viewMainPage method");
-//        BookService bookServicesImpl = BookServicesImpl.getInstance();
         List<Book> listOfBooks = bookServicesImpl.getListOfBooks();
         request.setAttribute("listOfBooks", listOfBooks);
         System.out.println("end of viewMainPage method");
@@ -89,6 +94,7 @@ public class BookServlet extends HttpServlet {
 
     void addNewBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("START OF addNew METHOD");
+
         request.getRequestDispatcher("WEB-INF/views/addBookPage.jsp").forward(request, response);
     }
 
@@ -97,8 +103,6 @@ public class BookServlet extends HttpServlet {
 
         int bookId = Integer.parseInt(request.getParameter("bookId"));
 
-//        BookService bookServicesImpl = BookServicesImpl.getInstance();
-//        BorrowService borrowServiceImpl = BorrowServicesImpl.getInstance();
         System.out.println("2 OF view METHOD");
 
 
@@ -118,7 +122,6 @@ public class BookServlet extends HttpServlet {
 
     void updateBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("START OF UPDATE METHOD");
-//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
 
         Book book = Utils.writeParamsIntoBookFromUpdateForm(request, new Book());
@@ -126,6 +129,8 @@ public class BookServlet extends HttpServlet {
 
         if (bookValidator.validateUpdateForm()) {
             bookServicesImpl.updateBook(book);
+            Utils.saveCoverToDisc(request, book);
+
             System.out.println("END OF UPDATE METHOD");
             viewMainPage(request, response);
 
@@ -136,14 +141,12 @@ public class BookServlet extends HttpServlet {
     }
 
     void removeBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
         bookServicesImpl.removeBook(Integer.parseInt(request.getParameter("bookId")));
         viewMainPage(request, response);
     }
 
     void addBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
         System.out.println("START OF ADD METHOD");
 
         Book book = Utils.writeParamsIntoBookFromAddForm(request, new Book());
@@ -151,12 +154,13 @@ public class BookServlet extends HttpServlet {
 
         if (bookValidator.validateAddForm()) {
             bookServicesImpl.addBook(book);
+            book.setBookId(bookServicesImpl.getBookId(book));
+            Utils.saveCoverToDisc(request, book);
 
             request.setAttribute("action", null);
             viewMainPage(request, response);
 
         } else {
-
             request.getRequestDispatcher("WEB-INF/views/addBookPage.jsp").forward(request, response);
         }
     }
@@ -164,7 +168,6 @@ public class BookServlet extends HttpServlet {
     void searchBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("end-end of search method");
 
-//        BookServicesImpl bookServicesImpl = BookServicesImpl.getInstance();
 
         Book book = Utils.writeParamsIntoBookFromViewForSearch(request, new Book());
 
@@ -177,6 +180,4 @@ public class BookServlet extends HttpServlet {
 
         request.getRequestDispatcher("WEB-INF/views/mainPage.jsp").forward(request, response);
     }
-
-
 }

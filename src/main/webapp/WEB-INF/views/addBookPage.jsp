@@ -14,12 +14,12 @@
     <div class="cover">
         <%--        // using Web Server for Chrome due to security issues -> Chrome does not allow img viewing from local sources--%>
         <%--        // so we need to emulate server for local files!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!edit below--%>
-        <%--        <img src="http://127.0.0.1:8887/${book.isbn}${book.coverExtension}" height=70% alt="cover_file">--%>
+                <img src="http://127.0.0.1:8887/${book.isbn}${book.coverExtension}" height=70% alt="cover_file">
     </div>
 
     <div class="table-values">
         BOOK-FORM
-        <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
+        <form id="send-values" action="${pageContext.request.contextPath}/" method="post" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" value="${book.title}" required="required">${message1}<br>
 
@@ -49,11 +49,11 @@
 
 
             <input type="hidden" name="action" value="add"/>
-            <%--            <div>--%>
-            <%--                <label for="file">Choose a file</label>--%>
-            <%--                <input type="file" id="file" name="file" accept="image/*">--%>
-            <%--            </div>--%>
-            <input type="submit" form="send-values" name="update"/>
+                        <div>
+                            <label for="file">Choose a file</label>
+                            <input type="file" id="file" name="file" accept="image/*">
+                        </div>
+            <input type="submit" form="send-values" name="update"/>${message10}
         </form>
 
         <button onclick="window.location.href='/';">

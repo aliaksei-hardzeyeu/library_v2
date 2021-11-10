@@ -14,13 +14,14 @@
     <div class="cover">
         <%--        // using Web Server for Chrome due to security issues -> Chrome does not allow img viewing from local sources--%>
         <%--        // so we need to emulate server for local files!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!edit below--%>
-        <%--        <img src="http://127.0.0.1:8887/${book.isbn}${book.coverExtension}" height=70% alt="cover_file">--%>
+                <img src="http://127.0.0.1:8887/${book.bookId}${book.coverExtension}" height=70% alt="cover_file">
+<%--        todo remove cover?--%>
     </div>
 
     <div class="table-values">
         BOOK-FORM
 
-        <form id="send-values" action="${pageContext.request.contextPath}/" method="post">
+        <form id="send-values" action="${pageContext.request.contextPath}/" method="post" enctype="multipart/form-data">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" value="<c:out value="${book.title}"/>" required="required">${message1}<br>
 
@@ -63,15 +64,16 @@
             <label for="status">Status:</label>
             <input type="text" id="status" name="status" value="<c:out value="${book.status}"/>" readonly><br>
 
-
+<%--todo message10 --%>
             <input type="hidden" id="bookId" name="bookId" value="<c:out value="${book.bookId}"/>"><br>
 
             <input type="hidden" name="action" value="update"/>
 
-            <%--            <div>--%>
-            <%--                <label for="file">Choose a file</label>--%>
-            <%--                <input type="file" id="file" name="file" accept="image/*">--%>
-            <%--            </div>--%>
+                        <div>
+                            <label for="file">Choose a file</label>
+                            <input type="file" id="file" name="file" accept="image/*">
+                            ${message10}
+                        </div>
             <input type="submit" form="send-values" name="update"/>
         </form>
 
