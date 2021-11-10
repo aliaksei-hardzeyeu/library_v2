@@ -2,22 +2,16 @@ package by.hardzeyeu.libraryV2.services.impl;
 
 import by.hardzeyeu.libraryV2.dao.BorrowDAO;
 import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
-import by.hardzeyeu.libraryV2.dto.NotificationLists;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.notifications.MessageTemplate;
 import by.hardzeyeu.libraryV2.services.BorrowService;
 import by.hardzeyeu.libraryV2.services.Utils;
-import org.apache.commons.collections4.MultiValuedMap;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -65,10 +59,6 @@ public class BorrowServicesImpl implements BorrowService {
 
     public LocalDate countDueDate(Borrow borrow) {
         return borrow.getBorrowDate().plus(Period.ofMonths(borrow.getTimePeriod()));
-    }
-
-    public LocalDate countReturnDate(Borrow borrow) {
-        return borrow.getChangedStatusDate();
     }
 
 

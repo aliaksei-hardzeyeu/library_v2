@@ -1,5 +1,6 @@
 package by.hardzeyeu.libraryV2.models;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,6 +26,9 @@ public class Book {
     private List<LocalDate> dueDatesWithoutStatus;
 
     private int changeAmount;
+
+    File cover;
+    String coverExtension;
 
     public Book() {
     }
@@ -103,6 +107,21 @@ public class Book {
         this.des = des;
     }
 
+    public String getCoverExtension() {
+        return coverExtension;
+    }
+
+    public void setCoverExtension(String coverExtension) {
+        this.coverExtension = coverExtension;
+    }
+
+    public File getCover() {
+        return cover;
+    }
+
+    public void setCover(File cover) {
+        this.cover = cover;
+    }
 
     public int getChangeAmount() {
         return changeAmount;

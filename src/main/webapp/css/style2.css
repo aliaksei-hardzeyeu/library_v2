@@ -3,7 +3,7 @@
 }
 
 .cover {
-    width: 5%;
+    width: 30%;
     height:  600px;
     background-color: aqua;
     border: 1px dashed red;
@@ -69,21 +69,6 @@
     left: 30%;
     bottom:-20% ;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 body {

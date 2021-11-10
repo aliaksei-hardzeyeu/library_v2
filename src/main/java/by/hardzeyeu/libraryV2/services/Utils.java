@@ -1,12 +1,20 @@
 package by.hardzeyeu.libraryV2.services;
 
+import by.hardzeyeu.libraryV2.dao.BookDAO;
 import by.hardzeyeu.libraryV2.models.Book;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class Utils {
     /**
@@ -41,8 +49,9 @@ public class Utils {
      * @return
      */
 
-    public static Book writeParamsIntoBookFromUpdateForm(HttpServletRequest request, Book book) {
+    public static Book writeParamsIntoBookFromUpdateForm(HttpServletRequest request, Book book) throws IOException, ServletException {
 
+        book.setBookId(Integer.parseInt(request.getParameter("bookId")));
         book.setTitle(request.getParameter("title"));
         book.setPublisher(request.getParameter("publisher"));
         book.setPageCount(Integer.parseInt(request.getParameter("pageCount")));
@@ -60,8 +69,12 @@ public class Utils {
         book.setCurrentlyAvailableAmount(Integer.parseInt(request.getParameter("currentlyAvailableAmount")));
 
 
-        if (request.getParameter("bookId") != null) {
-            book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+
+
+        if (request.getPart("file").getSize() > 0) {
+            book.setCoverExtension(Utils.getFileExtension(request.getPart("file")));
+        } else {
+            book.setCoverExtension(getCoverExtensionFromDb(book));
         }
 
 
@@ -80,7 +93,7 @@ public class Utils {
      * @return
      */
 
-    public static Book writeParamsIntoBookFromAddForm(HttpServletRequest request, Book book) {
+    public static Book writeParamsIntoBookFromAddForm(HttpServletRequest request, Book book) throws IOException, ServletException {
 
         book.setTitle(request.getParameter("title"));
         book.setPublisher(request.getParameter("publisher"));
@@ -92,6 +105,10 @@ public class Utils {
         book.setGenres(request.getParameter("genres"));
         book.setGivenAmount(Integer.parseInt(request.getParameter("givenAmount")));
 
+
+        if (request.getPart("file").getSize() > 0) {
+            book.setCoverExtension(Utils.getFileExtension(request.getPart("file")));
+        }
 
         if (request.getParameter("bookId") != null) {
             book.setBookId(Integer.parseInt(request.getParameter("bookId")));
@@ -125,6 +142,8 @@ public class Utils {
         book.setAuthors(result.getString("authors"));
         book.setGenres(result.getString("genres"));
         book.setGivenAmount(result.getInt("amount"));
+        book.setCoverExtension(result.getString("cover_ext"));
+
     }
 
     public static Book writeParamsIntoBookFromViewForSearch(HttpServletRequest request, Book book) {
@@ -134,5 +153,47 @@ public class Utils {
         book.setDes(request.getParameter("description"));
 
         return book;
+    }
+
+
+    /**
+     * Gets submitted as part file extension from part header
+     *
+     * @param part
+     * @return String extension -> .jpg
+     */
+
+    public static String getFileExtension(final Part part) {
+            for (String content : part.getHeader("content-disposition").split(";")) {
+                if (content.trim().startsWith("filename")) {
+                    return content.substring(content.indexOf('.')).trim().replace("\"", "");
+                }
+            }
+        return null;
+    }
+
+
+    public static void saveCoverToDisc(HttpServletRequest request, Book book) throws IOException, ServletException {
+        Part filePart = request.getPart("file");
+
+        if (filePart.getSize() > 0) {
+            File uploads = new File("E:\\books_covers_server\\", book.getBookId() + book.getCoverExtension());
+            Files.copy(filePart.getInputStream(), uploads.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            System.out.println("No cover");
+        }
+    }
+
+
+    /**
+     * Gets cover extension from db for particular book
+     *
+     * @param book
+     * @return
+     */
+
+    public static String getCoverExtensionFromDb(Book book) {
+        BookDAO bookDAO = new BookDAO();
+        return bookDAO.getCoverExtensionFromDb(book);
     }
 }
