@@ -8,6 +8,9 @@ import javax.servlet.annotation.WebListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @WebListener
 public class BackgroundJobManager implements ServletContextListener {
@@ -16,9 +19,7 @@ public class BackgroundJobManager implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-
         scheduler.scheduleAtFixedRate(new NotificationTask(), 0, 1, TimeUnit.DAYS);
-
     }
 
     @Override

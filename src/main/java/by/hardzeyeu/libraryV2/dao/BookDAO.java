@@ -14,58 +14,68 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BookDAO {
+    private final Connection connection;
 
 
-    public Book getBook(int bookId) {
+    /**
+     * Constructor for real work
+     */
+
+    public BookDAO() {
+        connection = C3P0DataSource.getInstance().getConnection();
+    }
+
+
+    /**
+     * Constructor for testing
+     *
+     * @param connection
+     */
+
+    public BookDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    public Book getBook(int bookId) throws SQLException {
         Book book = new Book();
         String query = "SELECT * FROM books WHERE book_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, bookId);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, bookId);
 
-            ResultSet result = preparedStatement.executeQuery();
+        ResultSet result = preparedStatement.executeQuery();
 
-            result.next();
-            Utils.writeParamsIntoBookFromDb(result, book);
+        result.next();
+        Utils.writeParamsIntoBookFromDb(result, book);
 
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return book;
     }
 
 
-    public List<Book> getListOfBooks() {
+    public List<Book> getListOfBooks() throws SQLException {
         List<Book> listOfBooks = new ArrayList<>();
         String query = "SELECT * FROM books";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(query);
+        Statement statement = connection.createStatement();
+        ResultSet result = statement.executeQuery(query);
 
-            while (result.next()) {
-                Book book = new Book();
+        while (result.next()) {
+            Book book = new Book();
 
-                Utils.writeParamsIntoBookFromDb(result, book);
+            Utils.writeParamsIntoBookFromDb(result, book);
 
-                listOfBooks.add(book);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            listOfBooks.add(book);
         }
 
         return listOfBooks;
     }
 
 
-    public List<Book> getListOfBooks(HashMap<String, String> searchParameters) {
+    public List<Book> getListOfBooks(HashMap<String, String> searchParameters) throws SQLException{
         List<Book> listOfBooks = new ArrayList<>();
         String query = "SELECT * FROM books WHERE title LIKE ? AND authors LIKE ? AND genres LIKE ? AND des LIKE ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, searchParameters.get("title"));
@@ -82,19 +92,15 @@ public class BookDAO {
 
                 listOfBooks.add(book);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return listOfBooks;
     }
 
 
-    public void addBook(Book book) {
+    public boolean addBook(Book book) throws SQLException{
         String query = "INSERT INTO books (title, publisher, page_count, isbn, des, publ_date, authors, genres, amount, cover_ext)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, book.getTitle());
@@ -111,18 +117,16 @@ public class BookDAO {
 
             preparedStatement.execute();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        return true;
     }
 
 
-    public void updateBook(Book book) {
+    public boolean updateBook(Book book) throws SQLException{
 
         String query = "UPDATE books SET title = ?, publisher = ?, page_count = ?, isbn = ?, des = ?, publ_date = ?, " +
                 "authors =?, genres = ?, amount = ?, cover_ext = ? WHERE book_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, book.getTitle());
@@ -141,16 +145,14 @@ public class BookDAO {
 
             preparedStatement.execute();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        return true;
     }
 
 
-    public void removeBook(int book_id) {
+    public boolean removeBook(int book_id) throws SQLException {
         String query = "DELETE FROM books WHERE book_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
@@ -158,17 +160,15 @@ public class BookDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        return true;
     }
 
 
-    public int getBookId(Book book) {
+    public int getBookId(Book book) throws SQLException{
         int bookId = 0;
         String query = "SELECT books.book_id FROM books WHERE isbn = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, book.getIsbn());
 
@@ -178,19 +178,15 @@ public class BookDAO {
 
             bookId = result.getInt("book_id");
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return bookId;
     }
 
 
-    public String getCoverExtensionFromDb(Book book) {
+    public String getCoverExtensionFromDb(Book book) throws SQLException{
         String coverExtension = null;
         String query = "SELECT cover_ext FROM books WHERE book_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, book.getBookId());
 
@@ -200,9 +196,6 @@ public class BookDAO {
 
             coverExtension = result.getString("cover_ext");
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return coverExtension;
     }

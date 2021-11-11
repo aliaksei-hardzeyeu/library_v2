@@ -2,6 +2,9 @@ package by.hardzeyeu.libraryV2.controllers;
 
 import by.hardzeyeu.libraryV2.services.BorrowService;
 import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +15,14 @@ import java.io.IOException;
 
 @WebServlet(name = "BorrowServlet", value = "/borrow")
 public class BorrowServlet extends HttpServlet {
+    Logger logger;
+
+    @Override
+    public void init() {
+        BasicConfigurator.configure();
+        logger = Logger.getLogger(BookServlet.class);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -20,7 +31,6 @@ public class BorrowServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        System.out.println("doPOST ACTION= " + action);
 
         switch (action == null ? "mainPage" : action) {
 
@@ -34,34 +44,32 @@ public class BorrowServlet extends HttpServlet {
         }
     }
 
-    void addBorrow(HttpServletRequest request,  HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("addborrow 0");
+    void addBorrow(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("adding new borrow");
 
         BorrowService borrowService = BorrowServicesImpl.getInstance();
 
-        System.out.println("addborrow 1");
         int bookId = Integer.parseInt(request.getParameter("bookId"));
         String userName = request.getParameter("name");
         String userEmail = request.getParameter("email");
         int timePeriod = Integer.parseInt(request.getParameter("period"));
         String comment = request.getParameter("comment");
-        System.out.println("addborrow 2");
 
         borrowService.addBorrow(bookId, userName, userEmail, timePeriod, comment);
 
-        System.out.println("addborrow 3");
+        logger.info("added new borrow successfully");
         response.sendRedirect(request.getContextPath() + "/?action=viewExisting&bookId=" + bookId);
     }
 
 
     void changeBorrowStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("addborrow 0");
+        logger.info("changing borrow status");
+
         BorrowService borrowService = BorrowServicesImpl.getInstance();
 
         borrowService.changeBorrowStatusSetReturnDate(request.getParameter("status"), Integer.parseInt(request.getParameter("borrowId")));
-        System.out.println("addborrow 1");
+        logger.info("changed borrow status");
 
         response.sendRedirect(request.getContextPath() + "/?action=viewExisting&bookId=" + request.getParameter("bookId"));
-
     }
 }

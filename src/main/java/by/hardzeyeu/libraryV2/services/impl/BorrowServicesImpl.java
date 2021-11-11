@@ -9,6 +9,7 @@ import by.hardzeyeu.libraryV2.services.BorrowService;
 import by.hardzeyeu.libraryV2.services.Utils;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -33,26 +34,42 @@ public class BorrowServicesImpl implements BorrowService {
 
     public void addBorrow(int bookId, String userName, String userEmail, int timePeriod, String comment) {
         Date borrowDateSql = Utils.convertToSqlDateFromLocalDate(LocalDate.now());
+        try {
             borrowDAO.addBorrow(bookId, userName, userEmail, borrowDateSql, timePeriod, comment);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public void changeBorrowStatusSetReturnDate(String status, int borrowId) {
-
-        borrowDAO.changeBorrowStatusSetReturnDate(status, borrowId);
+        try {
+            borrowDAO.changeBorrowStatusSetReturnDate(status, borrowId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public List<Borrow> getListOfBorrows(int bookId) {
-        List<Borrow> listOfBorrows = borrowDAO.getListOfBorrows(bookId);
 
-        for (Borrow borrow: listOfBorrows) {
+    public List<Borrow> getListOfBorrows(int bookId) {
+        List<Borrow> listOfBorrows = null;
+        try {
+            listOfBorrows = borrowDAO.getListOfBorrows(bookId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        for (Borrow borrow : listOfBorrows) {
             borrow.setDueDate(countDueDate(borrow));
         }
 
         return listOfBorrows;
     }
 
+
     /**
      * Counts due date -> borrow date + period
+     *
      * @param borrow
      * @return LocalDate due date
      */
@@ -63,7 +80,12 @@ public class BorrowServicesImpl implements BorrowService {
 
 
     public BookBorrowsInfo getBookBorrowsInfo(Book book) {
-        return borrowDAO.getBookBorrowsInfo(book);
+        try {
+            return borrowDAO.getBookBorrowsInfo(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -75,20 +97,28 @@ public class BorrowServicesImpl implements BorrowService {
 
     public List<Borrow> getBorrowsToNotifyToday() {
 
-        List<Borrow> borrowsToReturnInWeek = borrowDAO.getBorrowsToReturnInWeek();
-        List<Borrow> borrowsToReturnTomorrow = borrowDAO.getBorrowsToReturnTomorrow();
-        List<Borrow> borrowsToReturnYesterday = borrowDAO.getBorrowsToReturnYesterday();
+        List<Borrow> borrowsToReturnInWeek = null;
+        List<Borrow> borrowsToReturnTomorrow = null;
+        List<Borrow> borrowsToReturnYesterday = null;
 
+        try {
+            borrowsToReturnInWeek = borrowDAO.getBorrowsToReturnInWeek();
+            borrowsToReturnTomorrow = borrowDAO.getBorrowsToReturnTomorrow();
+            borrowsToReturnYesterday = borrowDAO.getBorrowsToReturnYesterday();
 
-        for (Borrow borrow:borrowsToReturnInWeek) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for (Borrow borrow : borrowsToReturnInWeek) {
             borrow.setNotification(MessageTemplate.returnCompletedNotificationWeek(borrow));
         }
 
-        for (Borrow borrow:borrowsToReturnTomorrow) {
+        for (Borrow borrow : borrowsToReturnTomorrow) {
             borrow.setNotification(MessageTemplate.returnCompletedNotificationTomorrow(borrow));
         }
 
-        for (Borrow borrow:borrowsToReturnYesterday) {
+        for (Borrow borrow : borrowsToReturnYesterday) {
             borrow.setNotification(MessageTemplate.returnCompletedNotificationYesterday(borrow));
         }
 

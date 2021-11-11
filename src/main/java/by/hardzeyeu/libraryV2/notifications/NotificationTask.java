@@ -1,8 +1,12 @@
 package by.hardzeyeu.libraryV2.notifications;
 
+import by.hardzeyeu.libraryV2.Test;
+import by.hardzeyeu.libraryV2.listeners.BackgroundJobManager;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.services.BorrowService;
 import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class NotificationTask implements Runnable{
+    private static final Logger logger = Logger.getLogger(NotificationTask.class);
     List<Borrow> allNotificationsForToday;
     BorrowService borrowService = BorrowServicesImpl.getInstance();
 
@@ -25,10 +30,15 @@ public class NotificationTask implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("i`m in run()");
+        BasicConfigurator.configure();
+        logger.info("Starting mail notification task");
+
         for (Borrow borrow: allNotificationsForToday) {
             mailTask(borrow);
+            logger.info("sent notification");
         }
+
+        logger.info("Ending mail notification task");
     }
 
 

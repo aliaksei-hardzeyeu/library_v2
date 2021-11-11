@@ -3,6 +3,7 @@ package by.hardzeyeu.libraryV2.models;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class Book {
     private int bookId;
@@ -89,6 +90,7 @@ public class Book {
         this.givenAmount = amount;
         this.bookId = bookId;
     }
+
 
 
     /**
@@ -276,6 +278,46 @@ public class Book {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return bookId == book.bookId && Objects.equals(title, book.title)
+                && Objects.equals(authors, book.authors)
+                && Objects.equals(publisher, book.publisher)
+                && Objects.equals(genres, book.genres)
+                && pageCount == book.pageCount
+                && Objects.equals(isbn, book.isbn)
+                && Objects.equals(des, book.des)
+                && Objects.equals(publDate, book.publDate)
+                && Objects.equals(status, book.status)
+                && Objects.equals(givenAmount, book.givenAmount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(bookId, title, authors, publisher, genres, pageCount, isbn, des,
+                publDate, status, givenAmount);
+    }
+
+    /**
+     * private int bookId;-
+     *     private String title;-
+     *     private String authors;-
+     *     private String publisher;
+     *     private String genres;
+     *     private int pageCount;
+     *     private String isbn;
+     *     private String des;
+     *     private LocalDate publDate;
+     *     private String status;
+     *     private int givenAmount;
+     * @return
+     */
+
 
     @Override
     public String toString() {

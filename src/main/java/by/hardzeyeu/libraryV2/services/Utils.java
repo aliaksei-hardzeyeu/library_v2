@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
     /**
@@ -194,6 +196,31 @@ public class Utils {
 
     public static String getCoverExtensionFromDb(Book book) {
         BookDAO bookDAO = new BookDAO();
-        return bookDAO.getCoverExtensionFromDb(book);
+        try {
+            return bookDAO.getCoverExtensionFromDb(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Parses raw parameters from search form to fit sql statement
+     *
+     * @param searchParameters
+     * @return
+     */
+
+    public static HashMap<String, String> parseParametersToFitSqlStatement(HashMap<String, String> searchParameters) {
+        for (Map.Entry<String, String> entry : searchParameters.entrySet()) {
+            if (entry.getValue().equals("")) {
+                entry.setValue("%");
+            } else {
+                entry.setValue("%" + entry.getValue() + "%");
+            }
+        }
+
+        return searchParameters;
     }
 }

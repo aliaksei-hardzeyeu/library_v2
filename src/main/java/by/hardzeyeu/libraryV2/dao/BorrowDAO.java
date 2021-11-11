@@ -20,35 +20,52 @@ import static by.hardzeyeu.libraryV2.services.Utils.convertToLocalDateViaSqlDate
 import static by.hardzeyeu.libraryV2.services.Utils.convertToSqlDateFromLocalDate;
 
 public class BorrowDAO {
+    private final Connection connection;
 
 
-    public List<Borrow> getListOfBorrows(int bookId) {
+    /**
+     * Constructor for real work
+     */
+
+    public BorrowDAO() {
+        connection = C3P0DataSource.getInstance().getConnection();
+    }
+
+
+    /**
+     * Constructor for testing
+     *
+     * @param connection
+     */
+
+    public BorrowDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+
+    public List<Borrow> getListOfBorrows(int bookId) throws SQLException {
         List<Borrow> listOfBorrows = new ArrayList<>();
         String query = "SELECT * FROM borrows WHERE book_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, bookId);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, bookId);
 
-            ResultSet result = preparedStatement.executeQuery();
+        ResultSet result = preparedStatement.executeQuery();
 
-            while (result.next()) {
-                Borrow borrow = new Borrow();
+        while (result.next()) {
+            Borrow borrow = new Borrow();
 
-                borrow.setBookId(result.getInt("book_id"));
-                borrow.setUserName(result.getString("user_name"));
-                borrow.setUserEmail(result.getString("user_email"));
-                borrow.setBorrowDate(convertToLocalDateViaSqlDate(result.getDate("borrow_date")));
-                borrow.setTimePeriod(result.getInt("time_period"));
-                borrow.setComment(result.getString("comment"));
-                borrow.setBorrowId(result.getInt("borrow_id"));
-                borrow.setReturnDate(convertToLocalDateViaSqlDate(result.getDate("return_date")));
+            borrow.setBookId(result.getInt("book_id"));
+            borrow.setUserName(result.getString("user_name"));
+            borrow.setUserEmail(result.getString("user_email"));
+            borrow.setBorrowDate(convertToLocalDateViaSqlDate(result.getDate("borrow_date")));
+            borrow.setTimePeriod(result.getInt("time_period"));
+            borrow.setComment(result.getString("comment"));
+            borrow.setBorrowId(result.getInt("borrow_id"));
+            borrow.setReturnDate(convertToLocalDateViaSqlDate(result.getDate("return_date")));
 
 
-                listOfBorrows.add(borrow);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            listOfBorrows.add(borrow);
         }
 
         return listOfBorrows;
@@ -65,33 +82,26 @@ public class BorrowDAO {
     }
 
 
-    public void addBorrow(int bookId, String userName, String userEmail, Date borrowDate, int timePeriod, String comment) {
-
+    public boolean addBorrow(int bookId, String userName, String userEmail, Date borrowDate,
+                             int timePeriod, String comment) throws SQLException {
+        connection.setAutoCommit(false);
         String query1 = "INSERT INTO borrows (book_id, user_name, user_email, borrow_date, time_period," +
                 " comment, due_date) VALUES (?, ?, ?, ?, ?, ?, (date_add(borrow_date, interval time_period month)))";
 
-        String query2 = "INSERT INTO library_v2.borrows (due_date) VALUES (date_add(borrow_date, INTERVAL time_period MONTH )) " +
-                        "WHERE return_date IS NULL ";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query1);
+        PreparedStatement preparedStatement = connection.prepareStatement(query1);
 
-            preparedStatement.setInt(1, bookId);
-            preparedStatement.setString(2, userName);
-            preparedStatement.setString(3, userEmail);
-            preparedStatement.setDate(4, borrowDate);
-            preparedStatement.setInt(5, timePeriod);
-            preparedStatement.setString(6, comment);
+        preparedStatement.setInt(1, bookId);
+        preparedStatement.setString(2, userName);
+        preparedStatement.setString(3, userEmail);
+        preparedStatement.setDate(4, borrowDate);
+        preparedStatement.setInt(5, timePeriod);
+        preparedStatement.setString(6, comment);
 
-            preparedStatement.execute();
-
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query2);
+        preparedStatement.execute();
 
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return true;
     }
 
 
@@ -102,11 +112,10 @@ public class BorrowDAO {
      * @param borrowId
      */
 
-    public void changeBorrowStatusSetReturnDate(String status, int borrowId) {
+    public boolean changeBorrowStatusSetReturnDate(String status, int borrowId) throws SQLException{
 
         String query = "UPDATE borrows SET status = ?, return_date = ? WHERE borrow_id = ?";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
             preparedStatement.setString(1, status);
@@ -115,9 +124,8 @@ public class BorrowDAO {
 
             preparedStatement.execute();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        return true;
     }
 
 
@@ -128,7 +136,7 @@ public class BorrowDAO {
      * @return
      */
 
-    public BookBorrowsInfo getBookBorrowsInfo(Book book) {
+    public BookBorrowsInfo getBookBorrowsInfo(Book book) throws SQLException{
 
         BookBorrowsInfo bookBorrowsInfo = new BookBorrowsInfo();
 
@@ -138,7 +146,6 @@ public class BorrowDAO {
                         "COUNT(IF(status ='returned', 1, null)) 'returned', " +
                         "COUNT(IF(status is NULL, 1, null)) 'borrowed' FROM borrows WHERE book_id = ?;";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
 
             PreparedStatement preparedStatement = connection.prepareStatement(query1);
             preparedStatement.setInt(1, book.getBookId());
@@ -168,9 +175,6 @@ public class BorrowDAO {
 
             bookBorrowsInfo.setDueDatesWithoutStatus(dueDates);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return bookBorrowsInfo;
     }
@@ -182,14 +186,13 @@ public class BorrowDAO {
      * @return
      */
 
-    public List<Borrow> getBorrowsToReturnInWeek() {
+    public List<Borrow> getBorrowsToReturnInWeek() throws SQLException{
         List<Borrow> borrowsToReturnInWeek = new ArrayList<>();
 
         String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
                 "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
                 "and date_add(curdate(), INTERVAL 7 day) = due_date";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
 
             Statement statement = connection.createStatement();
 
@@ -206,11 +209,8 @@ public class BorrowDAO {
 
                 borrowsToReturnInWeek.add(borrow);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-            return borrowsToReturnInWeek;
+        return borrowsToReturnInWeek;
     }
 
 
@@ -220,14 +220,13 @@ public class BorrowDAO {
      * @return
      */
 
-    public List<Borrow> getBorrowsToReturnTomorrow() {
+    public List<Borrow> getBorrowsToReturnTomorrow() throws SQLException{
         List<Borrow> borrowsToReturnTomorrow = new ArrayList<>();
 
         String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
                 "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
                 "and date_add(curdate(), INTERVAL 1 day) = due_date";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
 
             Statement statement = connection.createStatement();
 
@@ -244,9 +243,6 @@ public class BorrowDAO {
 
                 borrowsToReturnTomorrow.add(borrow);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return borrowsToReturnTomorrow;
     }
@@ -258,14 +254,13 @@ public class BorrowDAO {
      * @return
      */
 
-    public List<Borrow> getBorrowsToReturnYesterday() {
+    public List<Borrow> getBorrowsToReturnYesterday() throws SQLException{
         List<Borrow> borrowsToReturnYesterday = new ArrayList<>();
 
         String query = "SELECT borrows.book_id, books.title, borrows.user_name, borrows.user_email, borrows.due_date " +
                 "FROM borrows  JOIN books ON books.book_id = borrows.book_id where borrows.return_date is null " +
                 "and date_sub(curdate(), INTERVAL 1 day) = due_date";
 
-        try (Connection connection = C3P0DataSource.getInstance().getConnection()) {
 
             Statement statement = connection.createStatement();
 
@@ -282,9 +277,6 @@ public class BorrowDAO {
 
                 borrowsToReturnYesterday.add(borrow);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         return borrowsToReturnYesterday;
     }

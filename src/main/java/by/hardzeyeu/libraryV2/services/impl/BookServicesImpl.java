@@ -5,7 +5,9 @@ import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
+import by.hardzeyeu.libraryV2.services.Utils;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,12 @@ public class BookServicesImpl implements BookService {
 
 
     public Book getBook(int bookId) {
-        Book book = bookDAO.getBook(bookId);
+        Book book = null;
+        try {
+            book = bookDAO.getBook(bookId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         BorrowService borrowService = BorrowServicesImpl.getInstance();
 
         BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
@@ -42,7 +49,12 @@ public class BookServicesImpl implements BookService {
 
     public List<Book> getListOfBooks() {
         BorrowService borrowService = BorrowServicesImpl.getInstance();
-        List<Book> listOfBooks = bookDAO.getListOfBooks();
+        List<Book> listOfBooks = null;
+        try {
+            listOfBooks = bookDAO.getListOfBooks();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         for (Book book : listOfBooks) {
             BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
@@ -63,7 +75,7 @@ public class BookServicesImpl implements BookService {
 
     public List<Book> getListOfBooks(Book searchedBook) {
         BorrowService borrowService = BorrowServicesImpl.getInstance();
-        List<Book> listOfBooks;
+        List<Book> listOfBooks = null;
 
         String title = searchedBook.getTitle();
         String authors = searchedBook.getAuthors();
@@ -84,9 +96,13 @@ public class BookServicesImpl implements BookService {
             searchParameters.put("des", searchedBook.getDes());
 
 
-            parseParametersToFitSqlStatement(searchParameters);
+            Utils.parseParametersToFitSqlStatement(searchParameters);
 
-            listOfBooks = bookDAO.getListOfBooks(searchParameters);
+            try {
+                listOfBooks = bookDAO.getListOfBooks(searchParameters);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             for (Book book : listOfBooks) {
                 BookBorrowsInfo bookBorrowsInfo = borrowService.getBookBorrowsInfo(book);
@@ -100,17 +116,29 @@ public class BookServicesImpl implements BookService {
 
 
     public void addBook(Book book) {
-        bookDAO.addBook(book);
+        try {
+            bookDAO.addBook(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
     public void updateBook(Book book) {
-        bookDAO.updateBook(book);
+        try {
+            bookDAO.updateBook(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
     public void removeBook(int bookId) {
-        bookDAO.removeBook(bookId);
+        try {
+            bookDAO.removeBook(bookId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -152,27 +180,12 @@ public class BookServicesImpl implements BookService {
     }
 
 
-    /**
-     * Parses raw parameters from search form to fit sql statement
-     *
-     * @param searchParameters
-     * @return
-     */
-
-    HashMap<String, String> parseParametersToFitSqlStatement(HashMap<String, String> searchParameters) {
-        for (Map.Entry<String, String> entry : searchParameters.entrySet()) {
-            if (entry.getValue().equals("")) {
-                entry.setValue("%");
-            } else {
-                entry.setValue("%" + entry.getValue() + "%");
-            }
-        }
-
-        return searchParameters;
-    }
-
-
     public int getBookId(Book book) {
-        return bookDAO.getBookId(book);
+        try {
+            return bookDAO.getBookId(book);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
