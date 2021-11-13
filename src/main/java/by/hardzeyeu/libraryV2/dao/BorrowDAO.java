@@ -85,7 +85,6 @@ public class BorrowDAO {
 
     public boolean addBorrow(int bookId, String userName, String userEmail, Date borrowDate,
                              int timePeriod, String comment) throws SQLException {
-        connection.setAutoCommit(false);
         String query1 = "INSERT INTO borrows (book_id, user_name, user_email, borrow_date, time_period," +
                 " comment, due_date) VALUES (?, ?, ?, ?, ?, ?, (date_add(borrow_date, interval time_period month)))";
 

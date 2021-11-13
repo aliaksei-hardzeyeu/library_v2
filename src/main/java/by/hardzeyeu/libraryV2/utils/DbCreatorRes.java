@@ -17,7 +17,7 @@ public class DbCreatorRes {
             "    genres     VARCHAR(100) NOT NULL,\n" +
             "    amount     INTEGER      NOT NULL,\n" +
             "    cover_ext  VARCHAR(45)  NULL\n" +
-            ") ;";
+            ") ENGINE = InnoDB; ";
 
     static String createTableBorrows = "CREATE TABLE IF NOT EXISTS hardzeyeu.borrows\n" +
             "(\n" +
@@ -33,5 +33,5 @@ public class DbCreatorRes {
             "    due_date    DATE         NULL,\n" +
             "    CONSTRAINT fk_books FOREIGN KEY (book_id) REFERENCES hardzeyeu.books (book_id)\n" +
             "        ON DELETE CASCADE ON UPDATE CASCADE\n" +
-            ") ;";
+            ") ENGINE = InnoDB;";
 }

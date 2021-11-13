@@ -12,8 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import by.hardzeyeu.libraryV2.utils.DbCreator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 @WebListener
@@ -22,13 +20,14 @@ public class BackgroundJobManager implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        //create db
+        //create db if not exists
         DbCreator creator = new DbCreator();
         try {
             creator.createDbIfNotExists();
         } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
+        //start mail notification service
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new NotificationTask(), 0, 1, TimeUnit.DAYS);
     }
