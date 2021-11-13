@@ -2,7 +2,7 @@ package by.hardzeyeu.libraryV2.dao;
 
 import by.hardzeyeu.libraryV2.connection.C3P0DataSource;
 import by.hardzeyeu.libraryV2.models.Book;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +15,7 @@ import java.util.List;
 
 public class BookDAO {
     private final Connection connection;
+    private final C3P0DataSource dataSource = C3P0DataSource.getInstance();
 
 
     /**
@@ -22,7 +23,7 @@ public class BookDAO {
      */
 
     public BookDAO() {
-        connection = C3P0DataSource.getInstance().getConnection();
+        connection = dataSource.getConnection();
     }
 
 

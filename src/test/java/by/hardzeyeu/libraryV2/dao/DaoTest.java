@@ -1,8 +1,7 @@
 package by.hardzeyeu.libraryV2.dao;
 
 import by.hardzeyeu.libraryV2.models.Book;
-import by.hardzeyeu.libraryV2.models.Borrow;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -163,14 +162,6 @@ class DaoTest {
 
     @Test
     void addBorrow_ReturnsListWithNewBorrow() throws SQLException {
-//        Borrow borrow = new Borrow();
-//        borrow.setBookId(2);
-//        borrow.setUserName("user_name4");
-//        borrow.setUserEmail("mail4@tut.by");
-//        borrow.setBorrowDate(LocalDate.of(2021, 9, 9));
-//        borrow.setTimePeriod(1);
-//        borrow.setDueDate(LocalDate.of(2021, 10, 9));
-//        borrow.setComment("comment5");
 
         borrowDAO.addBorrow(2, "user_name4", "mail4@tut.by",
                 Utils.convertToSqlDateFromLocalDate(LocalDate.of(2021, 9, 9)), 1,

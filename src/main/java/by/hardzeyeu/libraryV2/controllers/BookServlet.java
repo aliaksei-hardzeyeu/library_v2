@@ -4,7 +4,7 @@ import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 import by.hardzeyeu.libraryV2.services.impl.BookServicesImpl;
 import by.hardzeyeu.libraryV2.services.impl.BorrowServicesImpl;
 import by.hardzeyeu.libraryV2.validators.BookValidator;

@@ -4,7 +4,7 @@ import by.hardzeyeu.libraryV2.connection.C3P0DataSource;
 import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,11 +16,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.hardzeyeu.libraryV2.services.Utils.convertToLocalDateViaSqlDate;
-import static by.hardzeyeu.libraryV2.services.Utils.convertToSqlDateFromLocalDate;
+import static by.hardzeyeu.libraryV2.utils.Utils.convertToLocalDateViaSqlDate;
+import static by.hardzeyeu.libraryV2.utils.Utils.convertToSqlDateFromLocalDate;
 
 public class BorrowDAO {
     private final Connection connection;
+    private final C3P0DataSource dataSource = C3P0DataSource.getInstance();
 
 
     /**
@@ -28,7 +29,7 @@ public class BorrowDAO {
      */
 
     public BorrowDAO() {
-        connection = C3P0DataSource.getInstance().getConnection();
+        connection = dataSource.getConnection();
     }
 
 

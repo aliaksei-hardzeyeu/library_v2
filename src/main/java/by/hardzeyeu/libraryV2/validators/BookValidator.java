@@ -29,31 +29,26 @@ public class BookValidator {
             request.setAttribute("message2", "Error entering authors, must be comma separated unique");
             errorCount++;
         }
-        System.out.println("2");
 
         if (!isPublicationDateValid(book)) {
             request.setAttribute("message4", "Date must not be after current date");
             errorCount++;
         }
-        System.out.println("3");
 
         if (!areGenresValid(book)) {
             request.setAttribute("message5", "Error entering genres, must be comma separated unique");
             errorCount++;
         }
-        System.out.println("4");
 
         if (!isPageCountValid(book)) {
             request.setAttribute("message6", "Must be positive number");
             errorCount++;
         }
-        System.out.println("5");
 
         if (!isIsbnValid(book)) {
             request.setAttribute("message7", "Check wiki for ISBN patterns");
             errorCount++;
         }
-        System.out.println("6");
 
 
         if (!isGivenAmountValid(book)) {
@@ -78,35 +73,30 @@ public class BookValidator {
             request.setAttribute("message2", "Error entering authors, must be comma separated unique");
             errorCount++;
         }
-        System.out.println("2");
 
 
         if (!isPublicationDateValid(book)) {
             request.setAttribute("message4", "Date must not be after current date");
             errorCount++;
         }
-        System.out.println("3");
 
 
         if (!areGenresValid(book)) {
             request.setAttribute("message5", "Error entering genres, must be comma separated unique");
             errorCount++;
         }
-        System.out.println("4");
 
 
         if (!isPageCountValid(book)) {
             request.setAttribute("message6", "Must be positive number");
             errorCount++;
         }
-        System.out.println("5");
 
 
         if (!isIsbnValid(book)) {
             request.setAttribute("message7", "Check wiki for ISBN patterns");
             errorCount++;
         }
-        System.out.println("6");
 
 
         if (!isChangeAmountValid(book)) {

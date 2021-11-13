@@ -6,7 +6,7 @@ import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.models.Borrow;
 import by.hardzeyeu.libraryV2.notifications.MessageTemplate;
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 
 import java.sql.Date;
 import java.sql.SQLException;

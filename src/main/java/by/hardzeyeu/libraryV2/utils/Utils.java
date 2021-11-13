@@ -1,4 +1,4 @@
-package by.hardzeyeu.libraryV2.services;
+package by.hardzeyeu.libraryV2.utils;
 
 import by.hardzeyeu.libraryV2.dao.BookDAO;
 import by.hardzeyeu.libraryV2.models.Book;
@@ -14,7 +14,6 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,7 +178,7 @@ public class Utils {
         Part filePart = request.getPart("file");
 
         if (filePart.getSize() > 0) {
-            File uploads = new File("E:\\books_covers_server\\", book.getBookId() + book.getCoverExtension());
+            File uploads = new File("e:\\books_covers_server\\", book.getBookId() + book.getCoverExtension());
             Files.copy(filePart.getInputStream(), uploads.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } else {
             System.out.println("No cover");

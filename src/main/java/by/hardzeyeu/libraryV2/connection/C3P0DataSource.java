@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 
 public class C3P0DataSource implements AutoCloseable{
-    private static final String URL = "jdbc:mysql://localhost:3306/library_v2";
+    private static final String URL = "jdbc:mysql://localhost:3306/hardzeyeu";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";

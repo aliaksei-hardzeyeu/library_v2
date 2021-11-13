@@ -5,13 +5,12 @@ import by.hardzeyeu.libraryV2.dto.BookBorrowsInfo;
 import by.hardzeyeu.libraryV2.models.Book;
 import by.hardzeyeu.libraryV2.services.BookService;
 import by.hardzeyeu.libraryV2.services.BorrowService;
-import by.hardzeyeu.libraryV2.services.Utils;
+import by.hardzeyeu.libraryV2.utils.Utils;
 
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class BookServicesImpl implements BookService {
